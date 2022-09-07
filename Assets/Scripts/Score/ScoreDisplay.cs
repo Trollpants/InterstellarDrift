@@ -6,6 +6,8 @@
 namespace InterstellarDrift
 {
     using DG.Tweening;
+    using DG.Tweening.Core;
+    using DG.Tweening.Plugins.Options;
     using UnityEngine;
     using UnityEngine.UI;
 
@@ -14,6 +16,7 @@ namespace InterstellarDrift
         private int targetScore;
         private Text scoreText;
         private IncrementHerder incrementHerder;
+        private TweenerCore<int, int, NoOptions> tweener;
 
         public int DisplayedScore { get; private set; }
 
@@ -40,7 +43,8 @@ namespace InterstellarDrift
             targetScore += amount;
 
             // Start tweening to new target score from current displayed score
-            DOTween.To(() => DisplayedScore, x => DisplayedScore = x, targetScore, .5f).OnUpdate(() => scoreText.text = string.Empty + DisplayedScore);
+            tweener?.Kill();
+            tweener = DOTween.To(() => DisplayedScore, x => DisplayedScore = x, targetScore, .5f).OnUpdate(() => scoreText.text = string.Empty + DisplayedScore);
 
             // Show increase amount with increment popup
             if (animateIncrement)
@@ -72,6 +76,11 @@ namespace InterstellarDrift
             {
                 incrementHerder.Decrement(amount);
             }
+        }
+
+        private void OnDestroy()
+        {
+            tweener?.Kill();
         }
 
         private void ResetScoreText()
