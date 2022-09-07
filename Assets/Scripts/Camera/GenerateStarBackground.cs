@@ -18,6 +18,7 @@ namespace InterstellarDrift
         [SerializeField] private Camera _sourceCamera;
         [SerializeField] private ParticleSystem _starParticleSystem;
         [SerializeField] private BackgroundType _backgroundType;
+        [SerializeField] private Shader _backShader;
 
         private MeshRenderer meshRenderer;
 
@@ -34,18 +35,13 @@ namespace InterstellarDrift
                 return null;
             }
 
-            if (screenshotCamera == null)
-            {
-                screenshotCamera = Camera.main;
-            }
-
-            var screenshot = new Texture2D(width, height, TextureFormat.RGB24, false);
-            var renderTex = new RenderTexture(width, height, 24);
+            var screenshot = new Texture2D(width, height, TextureFormat.ARGB32, false);
+            var renderTex = new RenderTexture(width, height, 32);
             screenshotCamera.targetTexture = renderTex;
             screenshotCamera.Render();
             RenderTexture.active = renderTex;
             screenshot.ReadPixels(new Rect(0, 0, width, height), 0, 0);
-            screenshot.Apply(false);
+            screenshot.Apply(true);
             screenshotCamera.targetTexture = null;
             RenderTexture.active = null;
             Destroy(renderTex);
@@ -78,7 +74,7 @@ namespace InterstellarDrift
                     if (TrackedData.Instance.SessionData.BackStarsTexture2D != null)
                     {
                         meshRenderer.material.mainTexture = TrackedData.Instance.SessionData.BackStarsTexture2D;
-                        meshRenderer.material.shader = Shader.Find("Unlit/Texture");
+                        meshRenderer.material.shader = _backShader;
                         gameObject.layer = 15;
                         return;
                     }
@@ -91,7 +87,7 @@ namespace InterstellarDrift
             }
 
             _starParticleSystem.Play();
-            Invoke("Snap", 0.05f);
+            Invoke(nameof(Snap), 0.15f);
         }
 
         private void Snap()
@@ -99,15 +95,19 @@ namespace InterstellarDrift
             var tex2D = TakeScreenshot(_sourceCamera);
             meshRenderer.material.mainTexture = tex2D;
             _starParticleSystem.Stop();
+            _starParticleSystem.gameObject.SetActive(false);
+            _sourceCamera.gameObject.SetActive(false);
             switch (_backgroundType)
             {
                 case BackgroundType.Front:
                     gameObject.layer = 14;
                     TrackedData.Instance.SessionData.FrontStarsTexture2D = tex2D;
+                    byte[] bytes = tex2D.EncodeToPNG();
+                    System.IO.File.WriteAllBytes("C:\\Users\\jizc\\Downloads\\SavedScreen.png", bytes);
                     break;
                 case BackgroundType.Back:
                     gameObject.layer = 15;
-                    meshRenderer.material.shader = Shader.Find("Unlit/Texture");
+                    meshRenderer.material.shader = _backShader;
                     TrackedData.Instance.SessionData.BackStarsTexture2D = tex2D;
                     break;
                 default:

@@ -69,7 +69,8 @@ namespace InterstellarDrift
             }
 
             // Start tweening to new target score from current displayed score
-            DOTween.To(() => DisplayedScore, x => DisplayedScore = x, targetScore, .5f).OnUpdate(() => scoreText.text = string.Empty + DisplayedScore);
+            tweener?.Kill();
+            tweener = DOTween.To(() => DisplayedScore, x => DisplayedScore = x, targetScore, .5f).OnUpdate(() => scoreText.text = string.Empty + DisplayedScore);
 
             // Show decrease with decrement popdown
             if (animateDecrement)

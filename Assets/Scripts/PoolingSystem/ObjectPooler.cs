@@ -148,13 +148,11 @@ namespace InterstellarDrift
                 return;
             }
 
-            var rb = g.GetComponent<Rigidbody>();
-            var rb2D = g.GetComponent<Rigidbody2D>();
-            if (rb2D != null)
+            if (g.TryGetComponent<Rigidbody2D>(out var rb2D))
             {
                 rb2D.Sleep();
             }
-            else if (rb != null)
+            else if (g.TryGetComponent<Rigidbody>(out var rb))
             {
                 rb.Sleep();
             }
@@ -203,13 +201,11 @@ namespace InterstellarDrift
                 return null;
             }
 
-            var rb = go.GetComponent<Rigidbody>();
-            var rb2D = go.GetComponent<Rigidbody2D>();
-            if (rb2D != null)
+            if (go.TryGetComponent<Rigidbody2D>(out var rb2D))
             {
                 rb2D.WakeUp();
             }
-            else if (rb != null)
+            else if (go.TryGetComponent<Rigidbody>(out var rb))
             {
                 rb.WakeUp();
             }
