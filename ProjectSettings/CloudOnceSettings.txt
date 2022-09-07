@@ -3,100 +3,84 @@
 		{
 			"InternalID":"NearMiss",
 			"AppleID":"",
-			"GoogleID":"",
-			"AmazonID":""
+			"GoogleID":""
 		},
 		{
 			"InternalID":"ItBegins",
 			"AppleID":"",
-			"GoogleID":"",
-			"AmazonID":""
+			"GoogleID":""
 		},
 		{
 			"InternalID":"GalaxyDrift",
 			"AppleID":"",
-			"GoogleID":"",
-			"AmazonID":""
+			"GoogleID":""
 		},
 		{
 			"InternalID":"Masteroid",
 			"AppleID":"",
-			"GoogleID":"",
-			"AmazonID":""
+			"GoogleID":""
 		},
 		{
 			"InternalID":"EarthToMoon",
 			"AppleID":"",
-			"GoogleID":"",
-			"AmazonID":""
+			"GoogleID":""
 		},
 		{
 			"InternalID":"SunToMercury",
 			"AppleID":"",
-			"GoogleID":"",
-			"AmazonID":""
+			"GoogleID":""
 		},
 		{
 			"InternalID":"SunToVenus",
 			"AppleID":"",
-			"GoogleID":"",
-			"AmazonID":""
+			"GoogleID":""
 		},
 		{
 			"InternalID":"SunToEarth",
 			"AppleID":"",
-			"GoogleID":"",
-			"AmazonID":""
+			"GoogleID":""
 		},
 		{
 			"InternalID":"SunToMars",
 			"AppleID":"",
-			"GoogleID":"",
-			"AmazonID":""
+			"GoogleID":""
 		},
 		{
 			"InternalID":"SunToJupiter",
 			"AppleID":"",
-			"GoogleID":"",
-			"AmazonID":""
+			"GoogleID":""
 		},
 		{
 			"InternalID":"SunToSaturn",
 			"AppleID":"",
-			"GoogleID":"",
-			"AmazonID":""
+			"GoogleID":""
 		},
 		{
 			"InternalID":"SunToUranus",
 			"AppleID":"",
-			"GoogleID":"",
-			"AmazonID":""
+			"GoogleID":""
 		},
 		{
 			"InternalID":"SunToNeptune",
 			"AppleID":"",
-			"GoogleID":"",
-			"AmazonID":""
+			"GoogleID":""
 		},
 		{
 			"InternalID":"SunToPluto",
 			"AppleID":"",
-			"GoogleID":"",
-			"AmazonID":""
+			"GoogleID":""
 		}
 	],
 	"LeaderboardIDs":[
 		{
 			"InternalID":"HighScores",
 			"AppleID":"",
-			"GoogleID":"",
-			"AmazonID":""
+			"GoogleID":""
 		},
 		{
 			"InternalID":"TimeAttack",
 			"AppleID":"",
-			"GoogleID":"",
-			"AmazonID":""
+			"GoogleID":""
 		}
 	],
 	"CloudVariables":[
@@ -138,12 +122,9 @@
 	],
 	"AppleSupported":true,
 	"GoogleSupported":true,
-	"AmazonSupported":true,
-	"AndroidPlatform":"1",
 	"GoogleAppID":"",
 	"GoogleSetupRun":false,
 	"DebugModeEnabled":false,
-	"Version":"2.5.0",
-	"APIKey":"",
+	"Version":"2.7.5",
 	"SettingsLocation":"0"
 }
