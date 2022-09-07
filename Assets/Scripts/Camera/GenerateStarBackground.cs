@@ -77,7 +77,7 @@ namespace InterstellarDrift
                 case BackgroundType.Back:
                     if (TrackedData.Instance.SessionData.BackStarsTexture2D != null)
                     {
-                        meshRenderer.material.mainTexture = TrackedData.Instance.SessionData.FrontStarsTexture2D;
+                        meshRenderer.material.mainTexture = TrackedData.Instance.SessionData.BackStarsTexture2D;
                         meshRenderer.material.shader = Shader.Find("Unlit/Texture");
                         gameObject.layer = 15;
                         return;
