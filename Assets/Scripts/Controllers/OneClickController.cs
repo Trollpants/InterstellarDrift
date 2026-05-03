@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="OneClickController.cs" company="Jan Ivar Z. Carlsen">
 // Copyright (c) 2018 Jan Ivar Z. Carlsen. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -7,13 +7,33 @@
 
 namespace InterstellarDrift
 {
-    using UnityEngine;
-
     /// <summary>
-    ///  Provides an implementation of the BaseController that uses a single mouse-click.
+    ///  Provides an implementation of the BaseController that uses a single mouse-click or touch.
     /// </summary>
     public class OneClickController : BaseController
     {
+        private GameInput _input;
+
+        private void Awake()
+        {
+            _input = new GameInput();
+        }
+
+        private void OnEnable()
+        {
+            _input.OneClick.Enable();
+        }
+
+        private void OnDisable()
+        {
+            _input.OneClick.Disable();
+        }
+
+        private void OnDestroy()
+        {
+            _input?.Dispose();
+        }
+
         private void Update()
         {
             if (!IsInitialized)
@@ -21,15 +41,11 @@ namespace InterstellarDrift
                 return;
             }
 
-#if DEBUG
-            Debug.Log("Mousebutton(0) is " + (Input.GetMouseButton(0) ? "pressed" : "not pressed"));
-#endif
-
-            if (Input.GetMouseButton(0))
+            if (_input.OneClick.Tap.IsPressed())
             {
                 IsInputActive = true;
             }
-            else if (Input.GetMouseButtonUp(0))
+            else if (_input.OneClick.Tap.WasReleasedThisFrame())
             {
                 // Set input to false and flip IsMovingRight so the next movement is opposite the previous.
                 IsInputActive = false;

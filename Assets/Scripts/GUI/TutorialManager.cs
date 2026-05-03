@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="TutorialManager.cs" company="Jan Ivar Z. Carlsen">
 // Copyright (c) 2018 Jan Ivar Z. Carlsen. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -13,11 +13,10 @@ namespace InterstellarDrift
 
     public class TutorialManager : MonoBehaviour
     {
-        private static readonly int s_halfScreenWidth = Screen.width / 2;
-
         [SerializeField] private Text _left;
         [SerializeField] private Text _right;
 
+        private GameInput _input;
         private bool pressedLeft;
         private bool pressedRight;
         private bool setNewTextLeft;
@@ -27,19 +26,26 @@ namespace InterstellarDrift
         private Rigidbody2D playerRigidbody2D;
         private BaseController playerBaseController;
 
-        private static bool BoostInputDetected()
+        private static int HalfScreenWidth => Screen.width / 2;
+
+        private void Awake()
         {
-            if (Input.touchCount != 2)
-            {
-                return false;
-            }
+            _input = new GameInput();
+        }
 
-            if (Input.touches[0].position.x < s_halfScreenWidth)
-            {
-                return Input.touches[1].position.x > s_halfScreenWidth;
-            }
+        private void OnEnable()
+        {
+            _input.Keyboard.Enable();
+        }
 
-            return Input.touches[1].position.x < s_halfScreenWidth;
+        private void OnDisable()
+        {
+            _input.Keyboard.Disable();
+        }
+
+        private void OnDestroy()
+        {
+            _input?.Dispose();
         }
 
         private void Start()
@@ -87,7 +93,7 @@ namespace InterstellarDrift
                         setNewTextRight = true;
                     }
 
-                    if (BoostInputDetected() || Input.GetKeyDown(KeyCode.Space))
+                    if (TouchInput.TwoFingerOppositeHalves(HalfScreenWidth) || _input.Keyboard.Boost.WasPressedThisFrame())
                     {
                         if (TrackedData.Instance)
                         {

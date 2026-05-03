@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="TwoButtonController.cs" company="Jan Ivar Z. Carlsen">
 // Copyright (c) 2018 Jan Ivar Z. Carlsen. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -14,21 +14,28 @@ namespace InterstellarDrift
     /// </summary>
     public class TwoButtonController : BaseController
     {
-        private static readonly int s_halfScreenWidth = Screen.width / 2;
+        private GameInput _input;
 
-        private static bool BoostInputDetected()
+        private static int HalfScreenWidth => Screen.width / 2;
+
+        private void Awake()
         {
-            if (Input.touchCount != 2)
-            {
-                return false;
-            }
+            _input = new GameInput();
+        }
 
-            if (Input.touches[0].position.x < s_halfScreenWidth)
-            {
-                return Input.touches[1].position.x > s_halfScreenWidth;
-            }
+        private void OnEnable()
+        {
+            _input.TwoButton.Enable();
+        }
 
-            return Input.touches[1].position.x < s_halfScreenWidth;
+        private void OnDisable()
+        {
+            _input.TwoButton.Disable();
+        }
+
+        private void OnDestroy()
+        {
+            _input?.Dispose();
         }
 
         private void Update()
@@ -38,19 +45,20 @@ namespace InterstellarDrift
                 return;
             }
 
-            if (Input.GetMouseButton(0))
+            if (_input.TwoButton.Press.IsPressed())
             {
                 IsInputActive = true;
             }
 
-            if (Input.GetMouseButtonUp(0))
+            if (_input.TwoButton.Press.WasReleasedThisFrame())
             {
                 IsInputActive = false;
             }
 
             if (IsInputActive)
             {
-                if (Input.mousePosition.x <= s_halfScreenWidth)
+                var pointerX = _input.TwoButton.PointerPosition.ReadValue<Vector2>().x;
+                if (pointerX <= HalfScreenWidth)
                 {
                     // Left side touched
                     IsMovingRight = false;
@@ -70,7 +78,7 @@ namespace InterstellarDrift
                 return;
             }
 
-            if (BoostInputDetected())
+            if (TouchInput.TwoFingerOppositeHalves(HalfScreenWidth))
             {
                 Boost();
             }
