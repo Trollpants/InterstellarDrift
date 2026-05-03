@@ -26,7 +26,7 @@ namespace InterstellarDrift
         {
             timeAlive += Time.deltaTime;
 
-            velocityCount += cachedRigidbody2D.velocity.magnitude * Time.deltaTime * 60;
+            velocityCount += cachedRigidbody2D.linearVelocity.magnitude * Time.deltaTime * 60;
         }
 
         private void Init()

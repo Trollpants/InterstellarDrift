@@ -77,7 +77,7 @@ namespace InterstellarDrift
             }
 
             // Adjust's the size of the orthogonal cameras view linearly with the velocity of the target object
-            var velocityMagnitude = Vector2.SqrMagnitude(TargetRigidbody2D.velocity);
+            var velocityMagnitude = Vector2.SqrMagnitude(TargetRigidbody2D.linearVelocity);
             currentTargetSize = Mathf.Clamp(velocityMagnitude, _minCameraSize, _maxCameraSize);
 
             foreach (var cam in Cameras)

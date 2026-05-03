@@ -52,7 +52,7 @@ namespace InterstellarDrift
             // IMPORTANT: If drag is 1f, Mass is 1f and ForceMode is set to Impulse, Force^2 = MaxVelocity. Ex: 2f^2 = 4 maxVel.
             // This means that we can calculate the needed constant force from the maximum velocity;
             // we can set a top speed and calculate the force needed to get there.
-            cachedRigidbody2D.drag = 1f;
+            cachedRigidbody2D.linearDamping = 1f;
 
             forwardForce = Mathf.Sqrt(_maxVelocity);
 
@@ -152,7 +152,7 @@ namespace InterstellarDrift
             }
 
             // Not moving much? Turn off bottom particle effect
-            if (Mathf.Abs(cachedRigidbody2D.velocity.sqrMagnitude) <= 25f && Effects.IsThrusterActive(Thruster.Bottom))
+            if (Mathf.Abs(cachedRigidbody2D.linearVelocity.sqrMagnitude) <= 25f && Effects.IsThrusterActive(Thruster.Bottom))
             {
                 Effects.DeactivateThruster(Thruster.Bottom);
             }

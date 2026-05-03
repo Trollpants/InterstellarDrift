@@ -46,7 +46,7 @@ namespace InterstellarDrift
 
         private void Awake()
         {
-            Application.targetFrameRate = Screen.currentResolution.refreshRate;
+            Application.targetFrameRate = (int)System.Math.Round(Screen.currentResolution.refreshRateRatio.value);
             Instance = this;
         }
     }

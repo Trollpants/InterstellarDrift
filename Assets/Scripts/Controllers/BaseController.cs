@@ -59,7 +59,7 @@ namespace InterstellarDrift
             // IMPORTANT: If drag is 1f, Mass is 1f and ForceMode is set to Impulse, Force^2 = MaxVelocity. Ex: 2f^2 = 4 maxVel.
             // This means that we can calculate the needed constant force from the maximum velocity;
             // we can set a top speed and calculate the force needed to get there.
-            CachedRigidbody2D.drag = 1f;
+            CachedRigidbody2D.linearDamping = 1f;
 
             // Sets default values
             SetMaxVelocity(25f);

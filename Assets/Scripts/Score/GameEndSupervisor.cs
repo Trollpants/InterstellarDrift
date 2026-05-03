@@ -40,7 +40,7 @@ namespace InterstellarDrift
             }
 
             // Deactivate all other Canvases
-            foreach (var canvas in FindObjectsOfType<Canvas>())
+            foreach (var canvas in FindObjectsByType<Canvas>())
             {
                 if (canvas == GetComponent<Canvas>())
                 {
