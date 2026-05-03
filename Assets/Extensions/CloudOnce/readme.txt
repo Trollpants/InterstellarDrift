@@ -1,5 +1,5 @@
 CloudOnce - Unified Game Services API
-http://jizc.github.io/CloudOnce
+https://cloudonce.github.io
 
 Description
 -----------
@@ -10,6 +10,14 @@ but it also attempts to satisfy the needs of power users.
 
 Release Notes
 -------------
+Version 3.1.0
+- Updated GPGS from v2.0.0 to v2.1.0
+
+Version 3.0.0
+- Unity 6 support
+- Updated GPGS from v0.10.14 to v2.0.0
+- Updated EDM4U from v1.2.167 to v1.2.182
+
 Version 2.7.5
 - Updated GPGS from v0.10.13 to v0.10.14
 - Fixed AndroidManifest path
