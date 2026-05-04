@@ -6,7 +6,6 @@
 namespace InterstellarDrift
 {
     using System.Collections.Generic;
-    using System.Linq;
     using CloudOnce;
     using UnityEngine;
 
@@ -15,6 +14,9 @@ namespace InterstellarDrift
         [SerializeField] private float _scoreThreshold = 1f;
         [SerializeField] private float _detectionRadius = 7.5f;
         [SerializeField] private LayerMask _detectionLayer;
+
+        private readonly Collider2D[] overlapBuffer = new Collider2D[32];
+        private readonly List<GameObject> keyBuffer = new();
 
         private bool isInitialized;
         private Dictionary<GameObject, float> previouslyDetected;
@@ -83,9 +85,11 @@ namespace InterstellarDrift
             }
 
             // Increases the time the gameobject has been detected for scoring purposes.
-            for (var i = 0; i < previouslyDetected.Count; i++)
+            keyBuffer.Clear();
+            keyBuffer.AddRange(previouslyDetected.Keys);
+            foreach (var key in keyBuffer)
             {
-                previouslyDetected[previouslyDetected.ElementAt(i).Key] += Time.deltaTime;
+                previouslyDetected[key] += Time.deltaTime;
             }
 
             // Add new, unregistered detected gameobjects to list of previously detected
@@ -152,9 +156,14 @@ namespace InterstellarDrift
                 return null;
             }
 
-            var detectedColliders = Physics2D.OverlapCircleAll(transform.position, radius, detectionLayer);
-            var detectedObjects = new List<GameObject>(detectedColliders.Length);
-            detectedObjects.AddRange(detectedColliders.Select(detected => detected.gameObject));
+            var filter = ContactFilter2D.noFilter;
+            filter.SetLayerMask(detectionLayer);
+            var hitCount = Physics2D.OverlapCircle(transform.position, radius, filter, overlapBuffer);
+            var detectedObjects = new List<GameObject>(hitCount);
+            for (var i = 0; i < hitCount; i++)
+            {
+                detectedObjects.Add(overlapBuffer[i].gameObject);
+            }
 
             return detectedObjects;
         }

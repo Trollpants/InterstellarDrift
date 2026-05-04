@@ -8,7 +8,6 @@
 namespace InterstellarDrift
 {
     using System;
-    using System.Collections.Generic;
     using UnityEngine;
     using Random = UnityEngine.Random;
 
@@ -29,6 +28,8 @@ namespace InterstellarDrift
         [SerializeField] private bool _initializeSelf;
         [SerializeField] private Transform targetTransform;
         [SerializeField] private LayerMask _obstacleMask;
+
+        private readonly Collider2D[] overlapBuffer = new Collider2D[16];
 
         private bool isInitialized;
 
@@ -74,7 +75,7 @@ namespace InterstellarDrift
             for (var i = 0; i < 10; i++)
             {
                 var location = GetRandomPointInSpawnCircle();
-                if (Physics2D.OverlapCircleAll(location, radiusOfObject, _obstacleMask).Length < 1)
+                if (Physics2D.OverlapCircle(location, radiusOfObject, _obstacleMask) == null)
                 {
                     spawnLocation = location;
                     return true;
@@ -105,7 +106,7 @@ namespace InterstellarDrift
             ActiveArea.transform.position = targetTransform.position + (targetTransform.up * activeAreaOffset);
 
             // Notify any listeners that it is possible to spawn.
-            if (GetObstaclesInSpawnArea().Count < maxDensityOfObstaclesInSpawnArea)
+            if (CountObstaclesInSpawnArea() < maxDensityOfObstaclesInSpawnArea)
             {
                 OnSpawnPossible?.Invoke();
             }
@@ -130,20 +131,22 @@ namespace InterstellarDrift
             return SpawnArea.offset + (Vector2)SpawnArea.transform.position + (Random.insideUnitCircle * SpawnArea.radius);
         }
 
-        private List<Transform> GetObstaclesInSpawnArea()
+        private int CountObstaclesInSpawnArea()
         {
-            var obstacles = new List<Transform>();
+            var center = (Vector2)SpawnArea.transform.position + SpawnArea.offset;
+            var filter = ContactFilter2D.noFilter;
+            var hitCount = Physics2D.OverlapCircle(center, SpawnArea.radius, filter, overlapBuffer);
 
-            var collidersInArea = Physics2D.OverlapCircleAll((Vector2)SpawnArea.transform.position + SpawnArea.offset, SpawnArea.radius);
-            foreach (var col in collidersInArea)
+            var obstacleCount = 0;
+            for (var i = 0; i < hitCount; i++)
             {
-                if (col.GetComponent<Obstacle>())
+                if (overlapBuffer[i].TryGetComponent<Obstacle>(out _))
                 {
-                    obstacles.Add(col.transform);
+                    obstacleCount++;
                 }
             }
 
-            return obstacles;
+            return obstacleCount;
         }
     }
 }
