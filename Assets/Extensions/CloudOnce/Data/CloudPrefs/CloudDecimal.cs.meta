@@ -3,9 +3,8 @@ guid: e27f2afa328fb0f49bbca00c62e762c3
 labels:
 - Cloud
 - Decimal
-timeCreated: 1462128332
-licenseType: Pro
 MonoImporter:
+  externalObjects: {}
   serializedVersion: 2
   defaultReferences: []
   executionOrder: 0

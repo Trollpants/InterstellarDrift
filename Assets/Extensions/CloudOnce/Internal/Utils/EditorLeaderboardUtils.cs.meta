@@ -3,9 +3,8 @@ guid: 1f8de5857ea68c4499bdb88115c8bbb5
 labels:
 - Editor
 - Utility
-timeCreated: 1438834072
-licenseType: Free
 MonoImporter:
+  externalObjects: {}
   serializedVersion: 2
   defaultReferences: []
   executionOrder: 0

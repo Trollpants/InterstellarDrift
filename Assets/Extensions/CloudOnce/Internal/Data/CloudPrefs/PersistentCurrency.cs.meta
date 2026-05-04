@@ -3,9 +3,8 @@ guid: a317d27a01e0d1b4ca497f9c057ceaee
 labels:
 - Persistent
 - Cloud
-timeCreated: 1436759515
-licenseType: Free
 MonoImporter:
+  externalObjects: {}
   serializedVersion: 2
   defaultReferences: []
   executionOrder: 0

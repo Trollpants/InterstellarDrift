@@ -2,9 +2,8 @@ fileFormatVersion: 2
 guid: 36ad867540e58e144943fc0d34299a21
 labels:
 - Achievements
-timeCreated: 1438836830
-licenseType: Free
 MonoImporter:
+  externalObjects: {}
   serializedVersion: 2
   defaultReferences: []
   executionOrder: 0

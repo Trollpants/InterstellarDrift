@@ -7,9 +7,8 @@ labels:
 - PlayerPrefs
 - Persistent
 - Variables
-timeCreated: 1441448190
-licenseType: Free
 TextScriptImporter:
+  externalObjects: {}
   userData: 
   assetBundleName: 
   assetBundleVariant: 
