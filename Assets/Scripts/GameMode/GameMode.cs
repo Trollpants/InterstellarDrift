@@ -43,7 +43,12 @@ namespace GameMode
 
         private void Awake()
         {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            // WebGL frame timing is driven by the browser's requestAnimationFrame; -1 lets it run at the monitor's natural refresh.
+            Application.targetFrameRate = -1;
+#else
             Application.targetFrameRate = (int)System.Math.Round(Screen.currentResolution.refreshRateRatio.value);
+#endif
             Instance = this;
         }
     }
