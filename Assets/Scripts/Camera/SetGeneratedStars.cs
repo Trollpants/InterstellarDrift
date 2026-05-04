@@ -24,14 +24,17 @@ namespace Camera
 
         private void Awake()
         {
-            var meshRenderer = GetComponent<MeshRenderer>();
-
-            meshRenderer.material.mainTexture = _backgroundType switch
+            var cached = _backgroundType switch
             {
-                BackgroundType.Front => TrackedData.Instance.SessionData.FrontStarsTexture2D,
-                BackgroundType.Back => TrackedData.Instance.SessionData.BackStarsTexture2D,
+                BackgroundType.Front => TrackedData.Instance.SessionData.FrontStarsTexture,
+                BackgroundType.Back => TrackedData.Instance.SessionData.BackStarsTexture,
                 _ => throw new ArgumentOutOfRangeException(null, _backgroundType, null)
             };
+
+            if (cached != null && (cached is not RenderTexture rt || rt.IsCreated()))
+            {
+                GetComponent<MeshRenderer>().material.mainTexture = cached;
+            }
         }
     }
 }

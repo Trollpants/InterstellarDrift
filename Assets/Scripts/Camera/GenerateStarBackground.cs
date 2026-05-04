@@ -29,24 +29,20 @@ namespace Camera
             Back
         }
 
-        private static Texture2D TakeScreenshot(UnityEngine.Camera screenshotCamera, int width = 2048, int height = 1024)
+        private static bool IsValid(Texture tex) => tex != null && (tex is not RenderTexture rt || rt.IsCreated());
+
+        private static RenderTexture RenderToTexture(UnityEngine.Camera screenshotCamera, int width = 2048, int height = 1024)
         {
             if (width < 1 || height < 1)
             {
                 return null;
             }
 
-            var screenshot = new Texture2D(width, height, TextureFormat.ARGB32, false);
-            var renderTex = new RenderTexture(width, height, 32);
+            var renderTex = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
             screenshotCamera.targetTexture = renderTex;
             screenshotCamera.Render();
-            RenderTexture.active = renderTex;
-            screenshot.ReadPixels(new Rect(0, 0, width, height), 0, 0);
-            screenshot.Apply(true);
             screenshotCamera.targetTexture = null;
-            RenderTexture.active = null;
-            Destroy(renderTex);
-            return screenshot;
+            return renderTex;
         }
 
         private void Awake()
@@ -62,9 +58,9 @@ namespace Camera
             switch (_backgroundType)
             {
                 case BackgroundType.Front:
-                    if (TrackedData.Instance.SessionData.FrontStarsTexture2D != null)
+                    if (IsValid(TrackedData.Instance.SessionData.FrontStarsTexture))
                     {
-                        meshRenderer.material.mainTexture = TrackedData.Instance.SessionData.FrontStarsTexture2D;
+                        meshRenderer.material.mainTexture = TrackedData.Instance.SessionData.FrontStarsTexture;
                         gameObject.layer = 14;
                         return;
                     }
@@ -72,9 +68,9 @@ namespace Camera
                     _sourceCamera.clearFlags = CameraClearFlags.Depth;
                     break;
                 case BackgroundType.Back:
-                    if (TrackedData.Instance.SessionData.BackStarsTexture2D != null)
+                    if (IsValid(TrackedData.Instance.SessionData.BackStarsTexture))
                     {
-                        meshRenderer.material.mainTexture = TrackedData.Instance.SessionData.BackStarsTexture2D;
+                        meshRenderer.material.mainTexture = TrackedData.Instance.SessionData.BackStarsTexture;
                         meshRenderer.material.shader = _backShader;
                         gameObject.layer = 15;
                         return;
@@ -93,8 +89,8 @@ namespace Camera
 
         private void Snap()
         {
-            var tex2D = TakeScreenshot(_sourceCamera);
-            meshRenderer.material.mainTexture = tex2D;
+            var rt = RenderToTexture(_sourceCamera);
+            meshRenderer.material.mainTexture = rt;
             _starParticleSystem.Stop();
             _starParticleSystem.gameObject.SetActive(false);
             _sourceCamera.gameObject.SetActive(false);
@@ -102,17 +98,15 @@ namespace Camera
             {
                 case BackgroundType.Front:
                     gameObject.layer = 14;
-                    TrackedData.Instance.SessionData.FrontStarsTexture2D = tex2D;
-                    byte[] bytes = tex2D.EncodeToPNG();
-                    System.IO.File.WriteAllBytes("C:\\Users\\jizc\\Downloads\\SavedScreen.png", bytes);
+                    TrackedData.Instance.SessionData.FrontStarsTexture = rt;
                     break;
                 case BackgroundType.Back:
                     gameObject.layer = 15;
                     meshRenderer.material.shader = _backShader;
-                    TrackedData.Instance.SessionData.BackStarsTexture2D = tex2D;
+                    TrackedData.Instance.SessionData.BackStarsTexture = rt;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(null, _backgroundType, null);
             }
         }
     }

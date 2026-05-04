@@ -23,8 +23,8 @@ namespace Data
 
         public int SecondsSurvived => MillisecondsSurvived / 1000;
 
-        public Texture2D FrontStarsTexture2D { get; set; }
-        public Texture2D BackStarsTexture2D { get; set; }
+        public Texture FrontStarsTexture { get; set; }
+        public Texture BackStarsTexture { get; set; }
 
         public void Init()
         {
