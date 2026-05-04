@@ -1,66 +1,87 @@
-﻿// <copyright file="IncrementHerder.cs" company="Jan Ivar Z. Carlsen">
+// <copyright file="IncrementHerder.cs" company="Jan Ivar Z. Carlsen">
 // Copyright (c) 2018 Jan Ivar Z. Carlsen. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace InterstellarDrift
+using System.Collections.Generic;
+using DG.Tweening;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace Score
 {
-    using DG.Tweening;
-    using UnityEngine;
-    using UnityEngine.UI;
-
     /// <summary>
-    ///  Duplicates a base increment-textobject, sets the increment-amount in the text-field and sets up the tweening.
+    ///  Spawns "+amount" / "-amount" popups that stack and float upward while fading out.
     /// </summary>
-    public class IncrementHerder : MonoBehaviour
+    public sealed class IncrementHerder : MonoBehaviour
     {
+        [SerializeField] private float _holdDuration = .6f;
         [SerializeField] private float _animationDuration = .5f;
+        [SerializeField] private float _floatDistance = 50f;
+        [SerializeField] private float _stackMargin = 8f;
+        [SerializeField] private float _slotReleaseDelay = .15f;
 
-        private GameObject incrementTextObject;
-        private Transform currentActivePopup;
+        private GameObject popupTemplate;
+        private Vector3 spawnAnchor;
+        private readonly List<RectTransform> slots = new();
 
         public void Init()
         {
-            // Get the base text-box that has been defined as a child.
-            incrementTextObject = transform.GetChild(0).gameObject;
+            // The first child is a hidden template we clone for each popup.
+            popupTemplate = transform.GetChild(0).gameObject;
+            spawnAnchor = popupTemplate.transform.localPosition;
         }
 
-        public void Increment(int amount)
-        {
-            Popup(amount, "+");
-        }
-
-        public void Decrement(int amount)
-        {
-            Popup(amount, "-");
-        }
+        public void Increment(int amount) => Popup(amount, "+");
+        public void Decrement(int amount) => Popup(amount, "-");
 
         private void Popup(int amount, string prefix)
         {
-            var obj = Instantiate(incrementTextObject);
+            var obj = Instantiate(popupTemplate, transform, false);
+            var rt = (RectTransform)obj.transform;
 
-            if (currentActivePopup)
-            {
-                obj.transform.localPosition = currentActivePopup.localPosition;
-            }
+            // A popup occupies a stack slot during its hold phase; the slot is released a short while
+            // after it starts floating away to give the previous popup time to clear.
+            var slot = AcquireSlot(rt);
+            var slotSpacing = rt.rect.height + _stackMargin;
+            var startLocal = spawnAnchor - new Vector3(0, slotSpacing * slot, 0);
+            rt.localPosition = startLocal;
 
-            var yOffset = obj.GetComponent<RectTransform>().rect.height;
-            obj.transform.localPosition -= new Vector3(0, yOffset, 0);
-            currentActivePopup = obj.transform;
-
-            obj.transform.SetParent(transform, false);
-
-            obj.GetComponent<Text>().text = prefix + amount;
+            var text = obj.GetComponent<Text>();
+            text.text = prefix + amount;
             obj.SetActive(true);
 
-            var seq1 = DOTween.Sequence();
+            DOTween.Sequence()
+                .AppendInterval(_holdDuration)
+                .Append(rt.DOLocalMoveY(startLocal.y + _floatDistance, _animationDuration).SetEase(Ease.OutQuad))
+                .Join(text.DOFade(0f, _animationDuration))
+                .InsertCallback(_holdDuration + _slotReleaseDelay, () => ReleaseSlot(slot, rt))
+                .OnComplete(() => Destroy(obj))
+                .OnKill(() => ReleaseSlot(slot, rt))
+                .SetLink(obj, LinkBehaviour.KillOnDestroy);
+        }
 
-            seq1.AppendInterval(_animationDuration);
-            seq1.Append(
-                obj.transform.DOLocalMove(
-                new Vector3(obj.transform.localPosition.x, transform.parent.localPosition.y - 50, obj.transform.localPosition.z),
-                _animationDuration)
-                .OnComplete(() => Destroy(obj)));
+        private int AcquireSlot(RectTransform rt)
+        {
+            for (var i = 0; i < slots.Count; i++)
+            {
+                if (slots[i] == null)
+                {
+                    slots[i] = rt;
+                    return i;
+                }
+            }
+
+            slots.Add(rt);
+            return slots.Count - 1;
+        }
+
+        private void ReleaseSlot(int slot, RectTransform rt)
+        {
+            if (slot >= 0 && slot < slots.Count && slots[slot] == rt)
+            {
+                slots[slot] = null;
+            }
         }
     }
 }
