@@ -97,7 +97,7 @@ namespace GUI
                         SoundManager.Instance.PlaySound(RecordBreakSound);
                     }
 
-                    BestNumber.transform.parent.DOPunchScale(BestNumber.transform.parent.localScale * _scaleRatio, _shakeDuration);
+                    BestNumber.transform.parent.DOPunchScale(BestNumber.transform.parent.localScale * _scaleRatio, _shakeDuration).SetLink(BestNumber.transform.parent.gameObject);
                     AnimateText(BestNumber, personalBest, sessionResult, duration - sequence.fullPosition);
                 }
             }));

@@ -21,8 +21,8 @@ namespace Camera
         {
             if (shakeTarget)
             {
-                shakeTarget.DOShakePosition(_duration, _shakeStrength);
-                shakeTarget.DOShakeRotation(_duration, _shakeStrength);
+                shakeTarget.DOShakePosition(_duration, _shakeStrength).SetLink(shakeTarget.gameObject);
+                shakeTarget.DOShakeRotation(_duration, _shakeStrength).SetLink(shakeTarget.gameObject);
             }
         }
 

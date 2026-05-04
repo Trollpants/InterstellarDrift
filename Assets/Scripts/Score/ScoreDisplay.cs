@@ -44,7 +44,9 @@ namespace Score
 
             // Start tweening to new target score from current displayed score
             tweener?.Kill();
-            tweener = DOTween.To(() => DisplayedScore, x => DisplayedScore = x, targetScore, .5f).OnUpdate(() => scoreText.text = DisplayedScore.ToString());
+            tweener = DOTween.To(() => DisplayedScore, x => DisplayedScore = x, targetScore, .5f)
+                .OnUpdate(() => scoreText.text = DisplayedScore.ToString())
+                .SetLink(scoreText.gameObject);
 
             // Show increase amount with increment popup
             if (animateIncrement)
@@ -70,7 +72,9 @@ namespace Score
 
             // Start tweening to new target score from current displayed score
             tweener?.Kill();
-            tweener = DOTween.To(() => DisplayedScore, x => DisplayedScore = x, targetScore, .5f).OnUpdate(() => scoreText.text = DisplayedScore.ToString());
+            tweener = DOTween.To(() => DisplayedScore, x => DisplayedScore = x, targetScore, .5f)
+                .OnUpdate(() => scoreText.text = DisplayedScore.ToString())
+                .SetLink(scoreText.gameObject);
 
             // Show decrease with decrement popdown
             if (animateDecrement)
@@ -78,8 +82,6 @@ namespace Score
                 incrementHerder.Decrement(amount);
             }
         }
-
-        private void OnDestroy() => tweener?.Kill();
 
         private void ResetScoreText()
         {

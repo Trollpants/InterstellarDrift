@@ -22,8 +22,8 @@ namespace Utilities
         {
             if (ShakeTarget)
             {
-                ShakeTarget.DOShakePosition(_duration, _shakeStrength);
-                ShakeTarget.DOShakeRotation(_duration, _shakeStrength);
+                ShakeTarget.DOShakePosition(_duration, _shakeStrength).SetLink(ShakeTarget.gameObject);
+                ShakeTarget.DOShakeRotation(_duration, _shakeStrength).SetLink(ShakeTarget.gameObject);
             }
         }
     }
