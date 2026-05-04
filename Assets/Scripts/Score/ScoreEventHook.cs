@@ -3,14 +3,14 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
+namespace Score
+{
     /// <summary>
     ///  Helper methods for events that need hooks to the singleton-instance.
     /// </summary>
-    public class ScoreEventHook : MonoBehaviour
+    public sealed class ScoreEventHook : MonoBehaviour
     {
         public void IncreaseScore(int amount)
         {

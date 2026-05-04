@@ -1,17 +1,18 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ScollingBackground.cs" company="Jan Ivar Z. Carlsen">
+// <copyright file="ScrollingBackground.cs" company="Jan Ivar Z. Carlsen">
 // Copyright (c) 2018 Jan Ivar Z. Carlsen. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
-    public class ScollingBackground : MonoBehaviour
+namespace Camera
+{
+    [RequireComponent(typeof(MeshRenderer))]
+    public sealed class ScrollingBackground : MonoBehaviour
     {
-        public Camera BackgroundCamera;
+        public UnityEngine.Camera BackgroundCamera;
         public float Speed = 1;
 
         private MeshRenderer background;
@@ -26,9 +27,9 @@ namespace InterstellarDrift
 
         private void Update()
         {
-            var newCameraPosistion = BackgroundCamera.transform.position;
-            var deltaPosistion = newCameraPosistion - oldCameraPosistion;
-            space.mainTextureOffset += (Vector2)deltaPosistion.normalized * Time.deltaTime * Speed;
+            var newCameraPosition = BackgroundCamera.transform.position;
+            var deltaPosition = newCameraPosition - oldCameraPosistion;
+            space.mainTextureOffset += Speed * Time.deltaTime * (Vector2)deltaPosition.normalized;
             oldCameraPosistion = BackgroundCamera.transform.position;
         }
     }

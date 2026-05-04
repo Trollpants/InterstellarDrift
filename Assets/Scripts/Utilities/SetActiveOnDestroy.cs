@@ -3,28 +3,28 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
+namespace Utilities
+{
     /// <summary>
     ///  Sets the active state of target gameobjects.
     /// </summary>
-    public class SetActiveOnDestroy : MonoBehaviour
+    public sealed class SetActiveOnDestroy : MonoBehaviour
     {
         [SerializeField] private GameObject _target;
         [SerializeField] private bool _activeState;
 
         public GameObject Target
         {
-            get { return _target; }
-            set { _target = value; }
+            get => _target;
+            set => _target = value;
         }
 
         public bool ActiveState
         {
-            get { return _activeState; }
-            set { _activeState = value; }
+            get => _activeState;
+            set => _activeState = value;
         }
 
         private void OnDestroy()

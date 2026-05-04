@@ -5,33 +5,18 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
-    public class KeyboardController : BaseController
+namespace Controllers
+{
+    public sealed class KeyboardController : BaseController
     {
         private GameInput _input;
 
-        private void Awake()
-        {
-            _input = new GameInput();
-        }
-
-        private void OnEnable()
-        {
-            _input.Keyboard.Enable();
-        }
-
-        private void OnDisable()
-        {
-            _input.Keyboard.Disable();
-        }
-
-        private void OnDestroy()
-        {
-            _input?.Dispose();
-        }
+        private void Awake() => _input = new GameInput();
+        private void OnEnable() => _input.Keyboard.Enable();
+        private void OnDisable() => _input.Keyboard.Disable();
+        private void OnDestroy() => _input?.Dispose();
 
         private void Update()
         {

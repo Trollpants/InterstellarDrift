@@ -5,16 +5,16 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
-    using UnityEngine.UI;
+using UnityEngine;
+using UnityEngine.UI;
 
+namespace GUI
+{
     /// <summary>
     ///  Gets the world-coordinate distance between two transforms and outputs it to the Text-component.
     /// </summary>
     [RequireComponent(typeof(Text))]
-    public class DistanceToText : MonoBehaviour
+    public sealed class DistanceToText : MonoBehaviour
     {
         public Transform TargetA;
         public Transform TargetB;
@@ -28,10 +28,7 @@ namespace InterstellarDrift
             TargetB = targetB;
         }
 
-        private void Awake()
-        {
-            Init(null, null);
-        }
+        private void Awake() => Init(null, null);
 
         private void Update()
         {
@@ -43,7 +40,7 @@ namespace InterstellarDrift
                 return;
             }
 
-            cachedText.text = string.Empty + (int)Vector3.Distance(TargetA.position, TargetB.position);
+            cachedText.text = ((int)Vector3.Distance(TargetA.position, TargetB.position)).ToString();
         }
     }
 }

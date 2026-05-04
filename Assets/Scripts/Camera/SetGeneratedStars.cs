@@ -5,13 +5,14 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using System;
-    using UnityEngine;
+using System;
+using Data;
+using UnityEngine;
 
+namespace Camera
+{
     [RequireComponent(typeof(MeshRenderer))]
-    public class SetGeneratedStars : MonoBehaviour
+    public sealed class SetGeneratedStars : MonoBehaviour
     {
         [SerializeField] private BackgroundType _backgroundType;
 
@@ -25,17 +26,12 @@ namespace InterstellarDrift
         {
             var meshRenderer = GetComponent<MeshRenderer>();
 
-            switch (_backgroundType)
+            meshRenderer.material.mainTexture = _backgroundType switch
             {
-                case BackgroundType.Front:
-                    meshRenderer.material.mainTexture = TrackedData.Instance.SessionData.FrontStarsTexture2D;
-                    break;
-                case BackgroundType.Back:
-                    meshRenderer.material.mainTexture = TrackedData.Instance.SessionData.BackStarsTexture2D;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                BackgroundType.Front => TrackedData.Instance.SessionData.FrontStarsTexture2D,
+                BackgroundType.Back => TrackedData.Instance.SessionData.BackStarsTexture2D,
+                _ => throw new ArgumentOutOfRangeException(null, _backgroundType, null)
+            };
         }
     }
 }

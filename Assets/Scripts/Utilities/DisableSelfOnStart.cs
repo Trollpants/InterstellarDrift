@@ -3,15 +3,12 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
-    public class DisableSelfOnStart : MonoBehaviour
+namespace Utilities
+{
+    public sealed class DisableSelfOnStart : MonoBehaviour
     {
-        private void Start()
-        {
-            gameObject.SetActive(false);
-        }
+        private void Start() => gameObject.SetActive(false);
     }
 }

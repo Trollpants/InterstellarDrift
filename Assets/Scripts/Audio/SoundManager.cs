@@ -5,12 +5,12 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using CloudOnce;
-    using UnityEngine;
-    using UnityEngine.Audio;
+using CloudOnce;
+using UnityEngine;
+using UnityEngine.Audio;
 
+namespace Audio
+{
     /// <summary>
     /// All sounds that can be played on an event
     /// </summary>
@@ -41,7 +41,7 @@ namespace InterstellarDrift
         Effect
     }
 
-    public class SoundManager : MonoBehaviour
+    public sealed class SoundManager : MonoBehaviour
     {
         private static SoundManager s_instance;
 
@@ -69,8 +69,8 @@ namespace InterstellarDrift
 
         public static SoundManager Instance
         {
-            get { return s_instance; }
-            set
+            get => s_instance;
+            private set
             {
                 if (s_instance != null)
                 {
@@ -97,8 +97,6 @@ namespace InterstellarDrift
         {
             switch (sound)
             {
-                case Sound.None:
-                    break;
                 case Sound.Death:
                     if (!deathSource.isPlaying)
                     {
@@ -113,10 +111,6 @@ namespace InterstellarDrift
                         checkpointSource.Play();
                     }
 
-                    break;
-                case Sound.MainBoost:
-                    break;
-                case Sound.SideBoost:
                     break;
                 case Sound.Button:
                     buttonSource.clip = buttonSounds[Random.Range(0, 3)];
@@ -152,6 +146,10 @@ namespace InterstellarDrift
                     copDeathSource.clip = copDeathSounds[Random.Range(0, 4)];
                     copDeathSource.Play();
                     break;
+                case Sound.None:
+                case Sound.MainBoost:
+                case Sound.SideBoost:
+                    break;
             }
         }
 
@@ -159,17 +157,11 @@ namespace InterstellarDrift
         {
             switch (sound)
             {
-                case Sound.None:
-                    break;
                 case Sound.Death:
                     deathSource.Stop();
                     break;
                 case Sound.Checkpoint:
                     checkpointSource.Stop();
-                    break;
-                case Sound.MainBoost:
-                    break;
-                case Sound.SideBoost:
                     break;
                 case Sound.Button:
                     buttonSource.Stop();
@@ -185,6 +177,10 @@ namespace InterstellarDrift
                     break;
                 case Sound.CopDeath:
                     copDeathSource.Stop();
+                    break;
+                case Sound.None:
+                case Sound.MainBoost:
+                case Sound.SideBoost:
                     break;
             }
         }

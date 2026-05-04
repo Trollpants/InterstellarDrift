@@ -5,38 +5,24 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
+using Utilities;
 
+namespace Controllers
+{
     /// <summary>
     ///  Provides an implementation of the BaseController that splits the screen into two buttons by width.
     /// </summary>
-    public class TwoButtonController : BaseController
+    public sealed class TwoButtonController : BaseController
     {
         private GameInput _input;
 
         private static int HalfScreenWidth => Screen.width / 2;
 
-        private void Awake()
-        {
-            _input = new GameInput();
-        }
-
-        private void OnEnable()
-        {
-            _input.TwoButton.Enable();
-        }
-
-        private void OnDisable()
-        {
-            _input.TwoButton.Disable();
-        }
-
-        private void OnDestroy()
-        {
-            _input?.Dispose();
-        }
+        private void Awake() => _input = new GameInput();
+        private void OnEnable() => _input.TwoButton.Enable();
+        private void OnDisable() => _input.TwoButton.Disable();
+        private void OnDestroy() => _input?.Dispose();
 
         private void Update()
         {

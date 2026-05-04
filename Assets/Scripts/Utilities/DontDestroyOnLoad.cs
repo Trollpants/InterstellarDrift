@@ -3,15 +3,12 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
-    public class DontDestroyOnLoad : MonoBehaviour
+namespace Utilities
+{
+    public sealed class DontDestroyOnLoad : MonoBehaviour
     {
-        private void Awake()
-        {
-            DontDestroyOnLoad(gameObject);
-        }
+        private void Awake() => DontDestroyOnLoad(gameObject);
     }
 }

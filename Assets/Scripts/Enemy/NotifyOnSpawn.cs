@@ -5,19 +5,17 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
-    using UnityEngine.Events;
+using PoolingSystem;
+using UnityEngine;
+using UnityEngine.Events;
 
-    public class NotifyOnSpawn : MonoBehaviour, ISpawnable
+namespace Enemy
+{
+    public sealed class NotifyOnSpawn : MonoBehaviour, ISpawnable
     {
         public UnityEvent OnSpawn;
 
-        void ISpawnable.OnSpawned(ObjectPooler pooler)
-        {
-            OnSpawn.Invoke();
-        }
+        void ISpawnable.OnSpawned(ObjectPooler pooler) => OnSpawn.Invoke();
 
         void ISpawnable.OnRecycled()
         {

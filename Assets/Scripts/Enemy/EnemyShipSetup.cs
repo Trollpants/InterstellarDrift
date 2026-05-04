@@ -5,11 +5,15 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using PoolingSystem;
+using UnityEngine;
 
-    public class EnemyShipSetup : MonoBehaviour, ISpawnable
+namespace Enemy
+{
+    [RequireComponent(typeof(EnemyDriver))]
+    [RequireComponent(typeof(Rigidbody2D))]
+    [RequireComponent(typeof(TargetTransform))]
+    public sealed class EnemyShipSetup : MonoBehaviour, ISpawnable
     {
         public GameObject Scanner;
         public TargetTransform Target;

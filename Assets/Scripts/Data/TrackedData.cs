@@ -5,23 +5,19 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using CloudOnce;
-    using UnityEngine;
-    using UnityEngine.SceneManagement;
+using CloudOnce;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
-    public class TrackedData : MonoBehaviour
+namespace Data
+{
+    public sealed class TrackedData : MonoBehaviour
     {
         private static TrackedData s_instance;
 
         public static TrackedData Instance
         {
-            get
-            {
-                return s_instance;
-            }
-
+            get => s_instance;
             private set
             {
                 if (s_instance != null)

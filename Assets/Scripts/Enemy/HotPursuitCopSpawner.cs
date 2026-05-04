@@ -5,11 +5,11 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
-    public class HotPursuitCopSpawner : MonoBehaviour
+namespace Enemy
+{
+    public sealed class HotPursuitCopSpawner : MonoBehaviour
     {
         public GameObject cop;
         public GameObject[] spawners;

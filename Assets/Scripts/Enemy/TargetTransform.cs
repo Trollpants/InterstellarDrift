@@ -5,12 +5,12 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
-    using UnityEngine.Events;
+using UnityEngine;
+using UnityEngine.Events;
 
-    public class TargetTransform : MonoBehaviour
+namespace Enemy
+{
+    public sealed class TargetTransform : MonoBehaviour
     {
         public UnityEvent OnTargetAcquired;
         public UnityEvent OnTargetLost;
@@ -19,7 +19,7 @@ namespace InterstellarDrift
 
         public Transform Target
         {
-            get { return _target; }
+            get => _target;
             set
             {
                 _target = value;

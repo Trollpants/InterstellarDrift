@@ -5,18 +5,15 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
-    public class LookAtTarget2D : MonoBehaviour
+namespace GUI
+{
+    public sealed class LookAtTarget2D : MonoBehaviour
     {
         public Transform TargetTransform;
 
-        public void Init(Transform targetTransform)
-        {
-            TargetTransform = targetTransform;
-        }
+        public void Init(Transform targetTransform) => TargetTransform = targetTransform;
 
         private static float Angle(Vector2 vector2)
         {

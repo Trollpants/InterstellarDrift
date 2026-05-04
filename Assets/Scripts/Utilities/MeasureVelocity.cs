@@ -3,11 +3,13 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using Data;
+using UnityEngine;
 
-    public class MeasureVelocity : MonoBehaviour
+namespace Utilities
+{
+    [RequireComponent(typeof(Rigidbody2D))]
+    public sealed class MeasureVelocity : MonoBehaviour
     {
         [SerializeField] private float _interval;
 
@@ -19,7 +21,7 @@ namespace InterstellarDrift
         {
             cachedRigidbody2D = GetComponent<Rigidbody2D>();
             Init();
-            Invoke("LogVelocity", _interval);
+            Invoke(nameof(LogVelocity), _interval);
         }
 
         private void Update()
@@ -40,7 +42,7 @@ namespace InterstellarDrift
             TrackedData.Instance.SessionData.DistanceTravelled += Mathf.FloorToInt(velocityCount/timeAlive);
             Init();
 
-            Invoke("LogVelocity", _interval);
+            Invoke(nameof(LogVelocity), _interval);
         }
     }
 }

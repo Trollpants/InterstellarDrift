@@ -5,11 +5,17 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using Audio;
+using Obstacles;
+using PoolingSystem;
+using Score;
+using UnityEngine;
 
-    public class EnemyCollision : MonoBehaviour
+namespace Enemy
+{
+    [RequireComponent(typeof(Obstacle))]
+    [RequireComponent(typeof(TargetTransform))]
+    public sealed class EnemyCollision : MonoBehaviour
     {
         public Sound OnCollision = Sound.Death;
 
@@ -44,13 +50,15 @@ namespace InterstellarDrift
             }
 
             var explosion = objectPooler.Spawn("Prefabs/", "Explosion", null, transform.position);
-            var particles = explosion.GetComponent<ParticleSystem>();
-            if (particles != null)
+            if (explosion.TryGetComponent<ParticleSystem>(out var particles))
             {
                 objectPooler.Recycle(explosion, particles.main.duration + 1f);
             }
 
-            cachedObstacle?.RecycleSelf();
+            if (cachedObstacle != null)
+            {
+                cachedObstacle.RecycleSelf();
+            }
         }
     }
 }

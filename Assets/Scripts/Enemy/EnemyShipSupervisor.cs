@@ -5,10 +5,13 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using Controllers;
+using Score;
+using Ship;
+using UnityEngine;
 
+namespace Enemy
+{
     public enum Controller
     {
         OneClick,
@@ -18,7 +21,7 @@ namespace InterstellarDrift
     }
 
     [RequireComponent(typeof(Rigidbody2D))]
-    public class EnemyShipSupervisor : MonoBehaviour
+    public sealed class EnemyShipSupervisor : MonoBehaviour
     {
         [SerializeField] private bool _initializeSelf;
         [SerializeField] private Controller _desiredController;
@@ -29,8 +32,8 @@ namespace InterstellarDrift
 
         public Controller DesiredController
         {
-            get { return _desiredController; }
-            set { _desiredController = value; }
+            get => _desiredController;
+            set => _desiredController = value;
         }
 
         public void Init()
@@ -57,21 +60,13 @@ namespace InterstellarDrift
             }
         }
 
-        private BaseController AddControllerOfType(Controller type)
+        private BaseController AddControllerOfType(Controller type) => type switch
         {
-            switch (type)
-            {
-                case Controller.OneClick:
-                    return gameObject.AddComponent<OneClickController>();
-                case Controller.TwoButton:
-                    return gameObject.AddComponent<TwoButtonController>();
-                case Controller.Keyboard:
-                    return gameObject.AddComponent<KeyboardController>();
-                case Controller.Enemy:
-                    return gameObject.AddComponent<EnemyController>();
-                default:
-                    return null;
-            }
-        }
+            Controller.OneClick => gameObject.AddComponent<OneClickController>(),
+            Controller.TwoButton => gameObject.AddComponent<TwoButtonController>(),
+            Controller.Keyboard => gameObject.AddComponent<KeyboardController>(),
+            Controller.Enemy => gameObject.AddComponent<EnemyController>(),
+            _ => null
+        };
     }
 }

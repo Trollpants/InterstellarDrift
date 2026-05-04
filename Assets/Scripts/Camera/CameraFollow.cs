@@ -5,15 +5,15 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
+namespace Camera
+{
     /// <summary>
     /// Drives the position of a gameobject containing cameras.
     /// IMPORTANT: Assumes that the script is on a container-gameobject, with the cameras you want driven around set as children.
     /// </summary>
-    public class CameraFollow : MonoBehaviour
+    public sealed class CameraFollow : MonoBehaviour
     {
         [SerializeField]
         private bool _initializeSelf;
@@ -37,7 +37,7 @@ namespace InterstellarDrift
         private Vector3 dynamicOffsetVelocity;
 
         private float cameraUnitDepth;
-        private Camera cachedCamera;
+        private UnityEngine.Camera cachedCamera;
 
         private Vector3 screenMiddle;
         private float xAxisExtent;
@@ -65,7 +65,7 @@ namespace InterstellarDrift
             ////  Set the initial values
             originalValues = transform.position;
 
-            cachedCamera = GetComponentInChildren<Camera>();
+            cachedCamera = GetComponentInChildren<UnityEngine.Camera>();
             cameraUnitDepth = cachedCamera.orthographicSize;
 
             CalculateExtents();
@@ -147,21 +147,14 @@ namespace InterstellarDrift
             // Used to draw the cross in the middle of the screen in debug-mode, in editor
             for (var i = 0; i < _edgeVectors.Length; i++)
             {
-                switch (i)
+                _edgeVectors[i] = i switch
                 {
-                    case 0: // top
-                        _edgeVectors[i] = cachedCamera.ViewportToWorldPoint(new Vector3(0.5f, 1f, cameraUnitDepth));
-                        break;
-                    case 1: // right
-                        _edgeVectors[i] = cachedCamera.ViewportToWorldPoint(new Vector3(1f, 0.5f, cameraUnitDepth));
-                        break;
-                    case 2: // bottom
-                        _edgeVectors[i] = cachedCamera.ViewportToWorldPoint(new Vector3(0.5f, 0f, cameraUnitDepth));
-                        break;
-                    case 3: // left
-                        _edgeVectors[i] = cachedCamera.ViewportToWorldPoint(new Vector3(0f, 0.5f, cameraUnitDepth));
-                        break;
-                }
+                    0 => cachedCamera.ViewportToWorldPoint(new Vector3(0.5f, 1f, cameraUnitDepth)), // top
+                    1 => cachedCamera.ViewportToWorldPoint(new Vector3(1f, 0.5f, cameraUnitDepth)), // right
+                    2 => cachedCamera.ViewportToWorldPoint(new Vector3(0.5f, 0f, cameraUnitDepth)), // bottom
+                    3 => cachedCamera.ViewportToWorldPoint(new Vector3(0f, 0.5f, cameraUnitDepth)), // left
+                    _ => _edgeVectors[i]
+                };
             }
 #endif
         }

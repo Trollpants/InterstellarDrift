@@ -5,14 +5,16 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using CloudOnce;
-    using DG.Tweening;
-    using UnityEngine;
-    using UnityEngine.UI;
+using Audio;
+using CloudOnce;
+using Data;
+using DG.Tweening;
+using UnityEngine;
+using UnityEngine.UI;
 
-    public class AnimateData : MonoBehaviour
+namespace GUI
+{
+    public sealed class AnimateData : MonoBehaviour
     {
         public StatType Type = StatType.Score;
 
@@ -74,22 +76,19 @@ namespace InterstellarDrift
             RoundNumber.text = "0";
 
             // Invoke animation
-            Invoke("AnimateValues", 1f);
+            Invoke(nameof(AnimateValues), 1f);
         }
 
-        private void AnimateValues()
-        {
-            AnimateText(RoundNumber, 0, sessionResult, _animationDuration);
-        }
+        private void AnimateValues() => AnimateText(RoundNumber, 0, sessionResult, _animationDuration);
 
         private void AnimateText(Text textToAnimate, int from, int to, float duration)
         {
             var displayedScore = from;
-            var sequence = DOTween.Sequence();
+            var sequence = DOTween.Sequence().SetLink(textToAnimate.gameObject, LinkBehaviour.KillOnDestroy);
 
             sequence.Append(DOTween.To(() => displayedScore, x => displayedScore = x, to, duration).OnUpdate(() =>
             {
-                textToAnimate.text = string.Empty + displayedScore;
+                textToAnimate.text = displayedScore.ToString();
                 if (displayedScore >= personalBest && !hasPassedPersonalBest)
                 {
                     hasPassedPersonalBest = true;

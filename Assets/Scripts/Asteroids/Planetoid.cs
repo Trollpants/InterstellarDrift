@@ -5,14 +5,16 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using PoolingSystem;
+using UnityEngine;
 
+namespace Asteroids
+{
     /// <summary>
     ///  Handles particle system activation/deactivation for the planetoids.
     /// </summary>
-    public class Planetoid : MonoBehaviour, ISpawnable
+    [RequireComponent(typeof(Rigidbody2D))]
+    public sealed class Planetoid : MonoBehaviour, ISpawnable
     {
         [SerializeField] private float _planetoidMaxForce = 2f;
         [SerializeField] private float _planetoidMaxTorque = 5f;
@@ -30,17 +32,14 @@ namespace InterstellarDrift
                 return;
             }
 
-            Invoke("Init", 0.2f);
+            Invoke(nameof(Init), 0.2f);
         }
 
         void ISpawnable.OnRecycled()
         {
         }
 
-        private void Awake()
-        {
-            cachedRigidBody2D = GetComponent<Rigidbody2D>();
-        }
+        private void Awake() => cachedRigidBody2D = GetComponent<Rigidbody2D>();
 
         private void Init()
         {

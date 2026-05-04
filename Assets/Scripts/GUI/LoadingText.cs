@@ -5,16 +5,16 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
-    using UnityEngine.UI;
+using UnityEngine;
+using UnityEngine.UI;
 
+namespace GUI
+{
     /// <summary>
     ///  Animates a 'Loading...' sentence in a text-box.
     /// </summary>
     [RequireComponent(typeof(Text))]
-    public class LoadingText : MonoBehaviour
+    public sealed class LoadingText : MonoBehaviour
     {
         public bool UpperCase;
 

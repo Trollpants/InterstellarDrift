@@ -5,13 +5,14 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using CloudOnce;
-    using UnityEngine;
-    using UnityEngine.UI;
+using CloudOnce;
+using UnityEngine;
+using UnityEngine.UI;
 
-    public class ToggleMute : MonoBehaviour
+namespace Audio
+{
+    [RequireComponent(typeof(Toggle))]
+    public sealed class ToggleMute : MonoBehaviour
     {
         private static void ToggleMuteOnEvent(bool soundOn)
         {

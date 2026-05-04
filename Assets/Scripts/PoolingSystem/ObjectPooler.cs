@@ -3,13 +3,13 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace InterstellarDrift
-{
-    using System.Collections.Generic;
-    using DG.Tweening;
-    using UnityEngine;
+using System.Collections.Generic;
+using DG.Tweening;
+using UnityEngine;
 
-    public class ObjectPooler : MonoBehaviour
+namespace PoolingSystem
+{
+    public sealed class ObjectPooler : MonoBehaviour
     {
         private Transform objectPoolTransform;
 
@@ -23,9 +23,7 @@ namespace InterstellarDrift
         /// <param name="worldPosition">Where in world space the object will be spawned</param>
         /// <returns>The spawned <see cref="GameObject"/></returns>
         public GameObject Spawn(string prefabPath, string prefabName, Transform parent, Vector3 worldPosition)
-        {
-            return Spawn(prefabPath, prefabName, parent, worldPosition, Quaternion.identity);
-        }
+            => Spawn(prefabPath, prefabName, parent, worldPosition, Quaternion.identity);
 
         /// <summary>
         /// Spawn an object from a prefab, the ObjectPooler will either instantiate a new object or reuse an old one
@@ -68,9 +66,7 @@ namespace InterstellarDrift
         /// <param name="worldPosition">Where in world space the object will be spawned</param>
         /// <returns>The spawned <see cref="GameObject"/></returns>
         public GameObject Spawn(GameObject prefab, Transform parent, Vector3 worldPosition)
-        {
-            return Spawn(prefab, parent, worldPosition, Quaternion.identity);
-        }
+            => Spawn(prefab, parent, worldPosition, Quaternion.identity);
 
         /// <summary>
         /// Spawn an object from a prefab, the ObjectPooler will either instantiate a new object or reuse an old one
@@ -174,21 +170,17 @@ namespace InterstellarDrift
 
             g.SetActive(false);
 
-            if (gameObjectTypePool != null)
-            {
-                t.SetParent(gameObjectTypePool);
-                t.localPosition = Vector3.zero;
-            }
-            else
+            if (gameObjectTypePool == null)
             {
                 var newGameObject = new GameObject { name = g.name + "s" };
                 newGameObject.transform.SetParent(objectPoolTransform);
                 newGameObject.transform.localPosition = Vector3.zero;
 
                 gameObjectTypePool = newGameObject.transform;
-                t.SetParent(gameObjectTypePool);
-                t.localPosition = Vector3.zero;
             }
+
+            t.SetParent(gameObjectTypePool);
+            t.localPosition = Vector3.zero;
         }
 
         private GameObject InitializeObject(GameObject go, Transform parent)
@@ -216,7 +208,7 @@ namespace InterstellarDrift
                 spawnable.OnSpawned(this);
             }
 
-            go.transform.SetParent(parent ?? transform);
+            go.transform.SetParent(parent != null ? parent : transform);
 
             go.SetActive(true);
             return go;

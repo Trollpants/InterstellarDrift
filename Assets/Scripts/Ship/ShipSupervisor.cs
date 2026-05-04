@@ -3,12 +3,15 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using Controllers;
+using Enemy;
+using Score;
+using UnityEngine;
 
+namespace Ship
+{
     [RequireComponent(typeof(Rigidbody2D))]
-    public class ShipSupervisor : MonoBehaviour
+    public sealed class ShipSupervisor : MonoBehaviour
     {
         [SerializeField] private bool _initializeSelf;
         [SerializeField] private Controller _desiredController;
@@ -45,21 +48,13 @@ namespace InterstellarDrift
             }
         }
 
-        private BaseController AddControllerOfType(Controller type)
+        private BaseController AddControllerOfType(Controller type) => type switch
         {
-            switch (type)
-            {
-                case Controller.OneClick:
-                    return gameObject.AddComponent<OneClickController>();
-                case Controller.TwoButton:
-                    return gameObject.AddComponent<TwoButtonController>();
-                case Controller.Keyboard:
-                    return gameObject.AddComponent<KeyboardController>();
-                case Controller.Enemy:
-                    return gameObject.AddComponent<EnemyController>();
-                default:
-                    return null;
-            }
-        }
+            Controller.OneClick => gameObject.AddComponent<OneClickController>(),
+            Controller.TwoButton => gameObject.AddComponent<TwoButtonController>(),
+            Controller.Keyboard => gameObject.AddComponent<KeyboardController>(),
+            Controller.Enemy => gameObject.AddComponent<EnemyController>(),
+            _ => null
+        };
     }
 }

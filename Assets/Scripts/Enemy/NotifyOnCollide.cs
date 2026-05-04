@@ -5,17 +5,17 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using System;
-    using UnityEngine;
-    using UnityEngine.Events;
+using System;
+using UnityEngine;
+using UnityEngine.Events;
 
+namespace Enemy
+{
     /// <summary>
     ///  Sends an event out to listeners when collisions with objects on the chosen layers occur.
     /// </summary>
     [RequireComponent(typeof(Collider2D))]
-    public class NotifyOnCollide : MonoBehaviour
+    public sealed class NotifyOnCollide : MonoBehaviour
     {
         public UnityEvent OnCollisionEnter;
         public UnityEvent OnCollisionStay;
@@ -25,7 +25,7 @@ namespace InterstellarDrift
 
         private void OnCollisionEnter2D(Collision2D other)
         {
-            if ((1 << other.gameObject.layer & _collisionLayers) != 0)
+            if (((1 << other.gameObject.layer) & _collisionLayers) != 0)
             {
                 OnCollisionEnter.Invoke();
             }
@@ -33,7 +33,7 @@ namespace InterstellarDrift
 
         private void OnCollisionStay2D(Collision2D other)
         {
-            if ((1 << other.gameObject.layer & _collisionLayers) != 0)
+            if (((1 << other.gameObject.layer) & _collisionLayers) != 0)
             {
                 OnCollisionStay.Invoke();
             }
@@ -41,7 +41,7 @@ namespace InterstellarDrift
 
         private void OnCollisionExit2D(Collision2D other)
         {
-            if ((1 << other.gameObject.layer & _collisionLayers) != 0)
+            if (((1 << other.gameObject.layer) & _collisionLayers) != 0)
             {
                 OnCollisionExit.Invoke();
             }
@@ -49,7 +49,7 @@ namespace InterstellarDrift
     }
 
     [Serializable]
-    public class Collision2DEvent : UnityEvent<Collider2D>
+    public sealed class Collision2DEvent : UnityEvent<Collider2D>
     {
     }
 }

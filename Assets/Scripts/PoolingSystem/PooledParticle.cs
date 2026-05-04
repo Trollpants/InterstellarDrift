@@ -3,11 +3,12 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
-    public class PooledParticle : MonoBehaviour, ISpawnable
+namespace PoolingSystem
+{
+    [RequireComponent(typeof(ParticleSystem))]
+    public sealed class PooledParticle : MonoBehaviour, ISpawnable
     {
         [SerializeField] private float _activationDelayOnSpawned = 0.15f;
 
@@ -24,7 +25,7 @@ namespace InterstellarDrift
                 return;
             }
 
-            Invoke("ActivateParticles", _activationDelayOnSpawned);
+            Invoke(nameof(ActivateParticles), _activationDelayOnSpawned);
         }
 
         void ISpawnable.OnRecycled()
@@ -41,14 +42,8 @@ namespace InterstellarDrift
             cachedParticleSystem.Stop();
         }
 
-        private void Awake()
-        {
-            cachedParticleSystem = GetComponent<ParticleSystem>();
-        }
+        private void Awake() => cachedParticleSystem = GetComponent<ParticleSystem>();
 
-        private void ActivateParticles()
-        {
-            cachedParticleSystem.Play();
-        }
+        private void ActivateParticles() => cachedParticleSystem.Play();
     }
 }

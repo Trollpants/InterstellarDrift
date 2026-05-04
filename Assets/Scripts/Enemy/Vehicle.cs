@@ -5,12 +5,15 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using Audio;
+using Ship;
+using UnityEngine;
 
+namespace Enemy
+{
     [RequireComponent(typeof(EffectsShepherd))]
-    public class Vehicle : MonoBehaviour
+    [RequireComponent(typeof(Rigidbody2D))]
+    public sealed class Vehicle : MonoBehaviour
     {
         private readonly ForceMode2D forceMode = ForceMode2D.Impulse;
 
@@ -70,7 +73,7 @@ namespace InterstellarDrift
             }
 
             // Provides motion in the forward direction
-            cachedRigidbody2D.AddForce(transform.up * forwardForce * Time.fixedDeltaTime, forceMode);
+            cachedRigidbody2D.AddForce(forwardForce * Time.fixedDeltaTime * transform.up, forceMode);
 
             if (Effects)
             {
@@ -176,9 +179,6 @@ namespace InterstellarDrift
             }
         }
 
-        private void Awake()
-        {
-            Init();
-        }
+        private void Awake() => Init();
     }
 }

@@ -5,7 +5,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
+namespace PoolingSystem
 {
     public interface ISpawnable
     {

@@ -5,21 +5,14 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+namespace Utilities
 {
-    using UnityEngine;
-    using UnityEngine.SceneManagement;
-
-    public class LoadScene : MonoBehaviour
+    public sealed class LoadScene : MonoBehaviour
     {
-        public void LoadSceneNumbered(int sceneNumber)
-        {
-            SceneManager.LoadScene(sceneNumber);
-        }
-
-        public void LoadSceneNamed(string sceneName)
-        {
-            SceneManager.LoadScene(sceneName);
-        }
+        public void LoadSceneNumbered(int sceneNumber) => SceneManager.LoadScene(sceneNumber);
+        public void LoadSceneNamed(string sceneName) => SceneManager.LoadScene(sceneName);
     }
 }

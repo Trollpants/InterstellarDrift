@@ -3,15 +3,15 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace InterstellarDrift
-{
-    using DG.Tweening;
-    using UnityEngine;
+using DG.Tweening;
+using UnityEngine;
 
+namespace Utilities
+{
     /// <summary>
     ///  Shakes a target transform on the destruction of this gameobject.
     /// </summary>
-    public class ShakeTargetOnDestroyed : MonoBehaviour
+    public sealed class ShakeTargetOnDestroyed : MonoBehaviour
     {
         public Transform ShakeTarget;
 

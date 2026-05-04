@@ -5,34 +5,19 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
+namespace Controllers
 {
     /// <summary>
     ///  Provides an implementation of the BaseController that uses a single mouse-click or touch.
     /// </summary>
-    public class OneClickController : BaseController
+    public sealed class OneClickController : BaseController
     {
         private GameInput _input;
 
-        private void Awake()
-        {
-            _input = new GameInput();
-        }
-
-        private void OnEnable()
-        {
-            _input.OneClick.Enable();
-        }
-
-        private void OnDisable()
-        {
-            _input.OneClick.Disable();
-        }
-
-        private void OnDestroy()
-        {
-            _input?.Dispose();
-        }
+        private void Awake() => _input = new GameInput();
+        private void OnEnable() => _input.OneClick.Enable();
+        private void OnDisable() => _input.OneClick.Disable();
+        private void OnDestroy() => _input?.Dispose();
 
         private void Update()
         {

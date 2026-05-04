@@ -5,15 +5,15 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
+namespace GUI
+{
     /// <summary>
     /// Makes a Canvas-element move towards a target point in the world.
     /// Options to make the element linger at the target or be destroyed; be clamped at screen-edges.
     /// </summary>
-    public class GUIElementFollowTarget : MonoBehaviour
+    public sealed class GUIElementFollowTarget : MonoBehaviour
     {
         public Transform TargetTransform;
 
@@ -30,13 +30,13 @@ namespace InterstellarDrift
 
         public bool DeactivateAtTarget
         {
-            get { return _deactivateAtTarget; }
-            set { _deactivateAtTarget = value; }
+            get => _deactivateAtTarget;
+            set => _deactivateAtTarget = value;
         }
 
         public bool CurrentlyActive
         {
-            get { return currentlyActive; }
+            get => currentlyActive;
             set
             {
                 currentlyActive = value;
@@ -50,8 +50,8 @@ namespace InterstellarDrift
 
         public bool ClampAtScreenEdge
         {
-            get { return _clampAtScreenEdge; }
-            set { _clampAtScreenEdge = value; }
+            get => _clampAtScreenEdge;
+            set => _clampAtScreenEdge = value;
         }
 
         public void Init(Transform target, bool clampAtScreenEdge, bool deactivateAtTarget)
@@ -63,10 +63,7 @@ namespace InterstellarDrift
             cachedCanvas = GetComponentInParent<Canvas>();
         }
 
-        private void Awake()
-        {
-            Init(TargetTransform, ClampAtScreenEdge, DeactivateAtTarget);
-        }
+        private void Awake() => Init(TargetTransform, ClampAtScreenEdge, DeactivateAtTarget);
 
         private void Update()
         {

@@ -5,13 +5,17 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using CloudOnce;
-    using UnityEngine;
-    using UnityEngine.UI;
+using CloudOnce;
+using Controllers;
+using Data;
+using Ship;
+using UnityEngine;
+using UnityEngine.UI;
+using Utilities;
 
-    public class TutorialManager : MonoBehaviour
+namespace GUI
+{
+    public sealed class TutorialManager : MonoBehaviour
     {
         [SerializeField] private Text _left;
         [SerializeField] private Text _right;
@@ -28,25 +32,10 @@ namespace InterstellarDrift
 
         private static int HalfScreenWidth => Screen.width / 2;
 
-        private void Awake()
-        {
-            _input = new GameInput();
-        }
-
-        private void OnEnable()
-        {
-            _input.Keyboard.Enable();
-        }
-
-        private void OnDisable()
-        {
-            _input.Keyboard.Disable();
-        }
-
-        private void OnDestroy()
-        {
-            _input?.Dispose();
-        }
+        private void Awake() => _input = new GameInput();
+        private void OnEnable() => _input.Keyboard.Enable();
+        private void OnDisable() => _input.Keyboard.Disable();
+        private void OnDestroy() => _input?.Dispose();
 
         private void Start()
         {

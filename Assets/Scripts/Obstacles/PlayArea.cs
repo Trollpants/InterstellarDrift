@@ -5,17 +5,18 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
+using System;
+using UnityEngine;
+
+namespace Obstacles
 {
-    using System;
-    using UnityEngine;
     using Random = UnityEngine.Random;
 
     /// <summary>
     ///  Defines an area around the player that is used for gameplay.
     ///  Contains some specialized helper-functions for other classes.
     /// </summary>
-    public class PlayArea : MonoBehaviour
+    public sealed class PlayArea : MonoBehaviour
     {
         private const float spawnAreaOffset = 160f;
         private const float spawnAreaRadius = 60f;
@@ -43,7 +44,7 @@ namespace InterstellarDrift
             if (targetTransform == null)
             {
                 var player = GameObject.FindWithTag("Player");
-                targetTransform = player?.transform ?? transform;
+                targetTransform = player != null ? player.transform : transform;
 #if DEBUG
                 Debug.LogWarning("PlayArea origin-point not set. Using default transform '" + targetTransform.name + "'.");
 #endif
@@ -127,9 +128,7 @@ namespace InterstellarDrift
 #endif
 
         private Vector2 GetRandomPointInSpawnCircle()
-        {
-            return SpawnArea.offset + (Vector2)SpawnArea.transform.position + (Random.insideUnitCircle * SpawnArea.radius);
-        }
+            => SpawnArea.offset + (Vector2)SpawnArea.transform.position + (Random.insideUnitCircle * SpawnArea.radius);
 
         private int CountObstaclesInSpawnArea()
         {

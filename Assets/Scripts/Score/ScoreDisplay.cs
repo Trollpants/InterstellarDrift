@@ -3,15 +3,15 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace InterstellarDrift
-{
-    using DG.Tweening;
-    using DG.Tweening.Core;
-    using DG.Tweening.Plugins.Options;
-    using UnityEngine;
-    using UnityEngine.UI;
+using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
+using UnityEngine;
+using UnityEngine.UI;
 
-    public class ScoreDisplay : MonoBehaviour
+namespace Score
+{
+    public sealed class ScoreDisplay : MonoBehaviour
     {
         private int targetScore;
         private Text scoreText;
@@ -79,10 +79,7 @@ namespace InterstellarDrift
             }
         }
 
-        private void OnDestroy()
-        {
-            tweener?.Kill();
-        }
+        private void OnDestroy() => tweener?.Kill();
 
         private void ResetScoreText()
         {

@@ -5,11 +5,11 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
-    public class GameMode : MonoBehaviour
+namespace GameMode
+{
+    public sealed class GameMode : MonoBehaviour
     {
         private static GameMode s_instance;
 
@@ -23,10 +23,7 @@ namespace InterstellarDrift
 
         public static GameMode Instance
         {
-            get
-            {
-                return s_instance;
-            }
+            get => s_instance;
             set
             {
                 if (s_instance != null)
@@ -40,8 +37,8 @@ namespace InterstellarDrift
 
         public Mode CurrentMode
         {
-            get { return _currentMode; }
-            set { _currentMode = value; }
+            get => _currentMode;
+            set => _currentMode = value;
         }
 
         private void Awake()

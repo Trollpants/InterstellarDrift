@@ -5,16 +5,16 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine.InputSystem.EnhancedTouch;
+using UnityEngine.InputSystem.EnhancedTouch;
 
+namespace Utilities
+{
     public static class TouchInput
     {
         public static bool TwoFingerOppositeHalves(int halfScreenWidth)
         {
             var touches = Touch.activeTouches;
-            if (touches.Count != 2)
+            if (touches.Count is not 2)
             {
                 return false;
             }

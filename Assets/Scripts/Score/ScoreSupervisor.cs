@@ -3,14 +3,16 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using Audio;
+using Data;
+using UnityEngine;
 
+namespace Score
+{
     /// <summary>
     ///  Defines methods for increasing and decreasing score.
     /// </summary>
-    public class ScoreSupervisor : MonoBehaviour
+    public sealed class ScoreSupervisor : MonoBehaviour
     {
         private static ScoreSupervisor s_instance;
 
@@ -19,8 +21,8 @@ namespace InterstellarDrift
 
         public static ScoreSupervisor Instance
         {
-            get { return s_instance; }
-            set
+            get => s_instance;
+            private set
             {
                 if (s_instance != null)
                 {
@@ -82,9 +84,6 @@ namespace InterstellarDrift
             scoreDisplay.DecreaseScore(amount, true);
         }
 
-        private void Awake()
-        {
-            Init();
-        }
+        private void Awake() => Init();
     }
 }

@@ -5,17 +5,17 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
+namespace Camera
+{
     public class CameraSizeRelativeToVelocity : MonoBehaviour
     {
         [SerializeField] private bool _initializeSelf;
 
         // CAMERA SIZE VARIABLES
         public Rigidbody2D TargetRigidbody2D;
-        public Camera[] Cameras;
+        public UnityEngine.Camera[] Cameras;
 
         [SerializeField] private float _minCameraSize = 15f;
         [SerializeField] private float _maxCameraSize = 30f;

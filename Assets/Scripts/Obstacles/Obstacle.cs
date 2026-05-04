@@ -5,17 +5,20 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using System.Collections;
-    using UnityEngine;
+using System.Collections;
+using PoolingSystem;
+using UnityEngine;
 
+namespace Obstacles
+{
     /// <summary>
     ///  A self-recycling obstacle.
     ///  Uses an IEnumerator to indefinitely check if it is within its allowed bounds. If false, calls for any listeners to recycle.
     /// </summary>
-    public class Obstacle : MonoBehaviour, ISpawnable
+    public sealed class Obstacle : MonoBehaviour, ISpawnable
     {
+        private static readonly WaitForSeconds s_waitForSeconds1 = new(1f);
+
         [SerializeField] private Collider2D _obstacleCollider2D;
         [SerializeField] private float _approximateRadius = 5f;
 
@@ -29,10 +32,7 @@ namespace InterstellarDrift
         public Collider2D ObstacleCollider2D => _obstacleCollider2D;
         public float ApproximateRadius => _approximateRadius;
 
-        public void SetAllowedArea(Collider2D area)
-        {
-            allowedArea = area;
-        }
+        public void SetAllowedArea(Collider2D area) => allowedArea = area;
 
         public void RecycleSelf()
         {
@@ -48,10 +48,7 @@ namespace InterstellarDrift
             objectPooler.Recycle(gameObject);
         }
 
-        void ISpawnable.OnSpawned(ObjectPooler pooler)
-        {
-            objectPooler = pooler;
-        }
+        void ISpawnable.OnSpawned(ObjectPooler pooler) => objectPooler = pooler;
 
         void ISpawnable.OnRecycled()
         {
@@ -104,7 +101,7 @@ namespace InterstellarDrift
                     RecycleSelf();
                 }
 
-                yield return new WaitForSeconds(1f);
+                yield return s_waitForSeconds1;
             }
         }
     }

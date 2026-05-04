@@ -5,12 +5,13 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using PoolingSystem;
+using UnityEngine;
 
+namespace Obstacles
+{
     [RequireComponent(typeof(PlayArea))]
-    public class ObstacleHerder : MonoBehaviour
+    public sealed class ObstacleHerder : MonoBehaviour
     {
         [SerializeField] private GameObject[] obstaclePrefabs;
 
@@ -24,10 +25,7 @@ namespace InterstellarDrift
             objectPooler = GameObject.FindWithTag("ObjectPooler").GetComponent<ObjectPooler>();
         }
 
-        private void OnDestroy()
-        {
-            playArea.OnSpawnPossible -= SpawnObstacle;
-        }
+        private void OnDestroy() => playArea.OnSpawnPossible -= SpawnObstacle;
 
         private void SpawnObstacle()
         {
@@ -36,8 +34,7 @@ namespace InterstellarDrift
             // fake radius for all collider2D
             var radius = obstaclePrefab.GetComponent<Obstacle>().ApproximateRadius;
 
-            Vector2 spawnLocation;
-            if (!playArea.GetSpawnLocation(radius, out spawnLocation))
+            if (!playArea.GetSpawnLocation(radius, out var spawnLocation))
             {
                 return;
             }

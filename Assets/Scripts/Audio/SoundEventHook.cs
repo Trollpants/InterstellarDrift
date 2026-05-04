@@ -5,14 +5,14 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
+namespace Audio
+{
     /// <summary>
     ///  Provides helper-methods for inspector-events to hook into the soundmanager-singleton.
     /// </summary>
-    public class SoundEventHook : MonoBehaviour
+    public sealed class SoundEventHook : MonoBehaviour
     {
         [SerializeField] private Sound _sound = Sound.Score;
 

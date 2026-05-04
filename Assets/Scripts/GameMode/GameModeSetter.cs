@@ -5,18 +5,14 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
+using UnityEngine;
+
+namespace GameMode
 {
-    using UnityEngine;
-    using Mode = GameMode.Mode;
-
-    public class GameModeSetter : MonoBehaviour
+    public sealed class GameModeSetter : MonoBehaviour
     {
-        public Mode TargetMode = Mode.Standard;
+        public GameMode.Mode TargetMode = GameMode.Mode.Standard;
 
-        public void SetMode()
-        {
-            GameMode.Instance.CurrentMode = TargetMode;
-        }
+        public void SetMode() => GameMode.Instance.CurrentMode = TargetMode;
     }
 }

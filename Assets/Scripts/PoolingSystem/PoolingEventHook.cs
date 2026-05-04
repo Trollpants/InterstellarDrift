@@ -3,11 +3,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
-    public class PoolingEventHook : MonoBehaviour
+namespace PoolingSystem
+{
+    public sealed class PoolingEventHook : MonoBehaviour
     {
         [SerializeField] private GameObject prefab;
 
@@ -25,8 +25,7 @@ namespace InterstellarDrift
             }
 
             var o = objectPooler.Spawn(prefab, null, transform.position, transform.localRotation);
-            var particles = o.GetComponent<ParticleSystem>();
-            if (particles != null)
+            if (o.TryGetComponent<ParticleSystem>(out var particles))
             {
                 objectPooler.Recycle(o, particles.main.duration + 1f);
             }
@@ -35,12 +34,14 @@ namespace InterstellarDrift
         private static ObjectPooler GetObjectPooler()
         {
             var poolerGameObject = GameObject.FindWithTag("ObjectPooler");
-            return poolerGameObject?.GetComponent<ObjectPooler>();
+            if (poolerGameObject != null && poolerGameObject.TryGetComponent<ObjectPooler>(out var pooler))
+            {
+                return pooler;
+            }
+
+            return null;
         }
 
-        private void Awake()
-        {
-            objectPooler = GetObjectPooler();
-        }
+        private void Awake() => objectPooler = GetObjectPooler();
     }
 }

@@ -5,17 +5,18 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using System;
-    using UnityEngine;
+using System;
+using Data;
+using UnityEngine;
 
+namespace Camera
+{
     [RequireComponent(typeof(MeshRenderer))]
-    public class GenerateStarBackground : MonoBehaviour
+    public sealed class GenerateStarBackground : MonoBehaviour
     {
         private static readonly Color s_backgroundColor = new Color32(18, 18, 43, 255);
 
-        [SerializeField] private Camera _sourceCamera;
+        [SerializeField] private UnityEngine.Camera _sourceCamera;
         [SerializeField] private ParticleSystem _starParticleSystem;
         [SerializeField] private BackgroundType _backgroundType;
         [SerializeField] private Shader _backShader;
@@ -28,7 +29,7 @@ namespace InterstellarDrift
             Back
         }
 
-        private static Texture2D TakeScreenshot(Camera screenshotCamera, int width = 2048, int height = 1024)
+        private static Texture2D TakeScreenshot(UnityEngine.Camera screenshotCamera, int width = 2048, int height = 1024)
         {
             if (width < 1 || height < 1)
             {

@@ -5,18 +5,19 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using System;
-    using UnityEngine;
-    using UnityEngine.Events;
+using System;
+using PoolingSystem;
+using UnityEngine;
+using UnityEngine.Events;
 
+namespace Enemy
+{
     /// <summary>
     ///  Detects gameobjects on the targetMask-layer, and checks if there's a clear view of the target.
     ///  Notifies listeners of the OnTargetAcquried-event when a target is found, and stops detecting.
     /// </summary>
     [RequireComponent(typeof(Collider2D))]
-    public class Scanner2D : MonoBehaviour, ISpawnable
+    public sealed class Scanner2D : MonoBehaviour, ISpawnable
     {
         public TransformEvent OnTargetFound;
 
@@ -25,10 +26,7 @@ namespace InterstellarDrift
 
         private bool foundTarget;
 
-        void ISpawnable.OnSpawned(ObjectPooler pooler)
-        {
-            foundTarget = false;
-        }
+        void ISpawnable.OnSpawned(ObjectPooler pooler) => foundTarget = false;
 
         void ISpawnable.OnRecycled()
         {
@@ -48,7 +46,7 @@ namespace InterstellarDrift
             }
 
             // If gameobject is on targeted layer
-            if ((1 << col.gameObject.layer & _targetMask) != 0)
+            if (((1 << col.gameObject.layer) & _targetMask) != 0)
             {
                 // If no obstacles were hit when trying to "see" the target, we can see it!
                 if (!Physics2D.Linecast(transform.position, col.transform.position, _obstacleMask).collider)
@@ -61,7 +59,7 @@ namespace InterstellarDrift
     }
 
     [Serializable]
-    public class TransformEvent : UnityEvent<Transform>
+    public sealed class TransformEvent : UnityEvent<Transform>
     {
     }
 }

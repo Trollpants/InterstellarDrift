@@ -3,14 +3,14 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
+namespace Score
+{
     /// <summary>
     ///  Provides a simple way to increase the score of the player when an object is destroyed or despawned.
     /// </summary>
-    public class AddToScoreOnDestroy : MonoBehaviour
+    public sealed class AddToScoreOnDestroy : MonoBehaviour
     {
         [SerializeField] private int _addAmount = 100;
         [SerializeField] private bool _playSound;
@@ -18,15 +18,9 @@ namespace InterstellarDrift
         /// <summary>
         /// For objects that are despawned instead of destroyed.
         /// </summary>
-        public void OnDespawned()
-        {
-            Increase();
-        }
+        public void OnDespawned() => Increase();
 
-        private void OnDestroy()
-        {
-            Increase();
-        }
+        private void OnDestroy() => Increase();
 
         private void Increase()
         {

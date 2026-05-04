@@ -3,13 +3,13 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace InterstellarDrift
-{
-    using System.Collections.Generic;
-    using CloudOnce;
-    using UnityEngine;
+using System.Collections.Generic;
+using CloudOnce;
+using UnityEngine;
 
-    public class DetectionRadius : MonoBehaviour
+namespace Score
+{
+    public sealed class DetectionRadius : MonoBehaviour
     {
         [SerializeField] private float _scoreThreshold = 1f;
         [SerializeField] private float _detectionRadius = 7.5f;
@@ -23,8 +23,8 @@ namespace InterstellarDrift
 
         public LayerMask DetectionLayer
         {
-            get { return _detectionLayer; }
-            set { _detectionLayer = value; }
+            get => _detectionLayer;
+            set => _detectionLayer = value;
         }
 
         public void Init(int detectionLayer)
@@ -42,23 +42,19 @@ namespace InterstellarDrift
 
         private void Update()
         {
-            if (!isInitialized)
+            if (isInitialized)
             {
-                return;
+                CheckDetectedAndAttemptToScore(GetGameObjectsWithinDetectionRadius(_detectionRadius, DetectionLayer));
             }
-
-            CheckDetectedAndAttemptToScore(GetGameObjectsWithinDetectionRadius(_detectionRadius, DetectionLayer));
         }
 
 #if DEBUG
         private void OnDrawGizmos()
         {
-            if (!isInitialized)
+            if (isInitialized)
             {
-                return;
+                Gizmos.DrawWireSphere(transform.position, _detectionRadius);
             }
-
-            Gizmos.DrawWireSphere(transform.position, _detectionRadius);
         }
 #endif
 
@@ -70,12 +66,10 @@ namespace InterstellarDrift
             // Clean list of previously detected of keys that are no longer present, increment time detected of still present keys
             foreach (var previousPair in previouslyDetected)
             {
-                if (currentDetected.Contains(previousPair.Key))
+                if (!currentDetected.Contains(previousPair.Key))
                 {
-                    continue;
+                    removables.Add(previousPair.Key);
                 }
-
-                removables.Add(previousPair.Key);
             }
 
             // Actual cleaning outside of loop
@@ -95,12 +89,7 @@ namespace InterstellarDrift
             // Add new, unregistered detected gameobjects to list of previously detected
             foreach (var current in currentDetected)
             {
-                if (previouslyDetected.ContainsKey(current))
-                {
-                    continue;
-                }
-
-                previouslyDetected.Add(current, 0f);
+                previouslyDetected.TryAdd(current, 0f);
             }
 
             // Holds the keys for the values that have exceeded the scorethreshold and must be reset

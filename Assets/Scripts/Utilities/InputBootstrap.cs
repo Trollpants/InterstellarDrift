@@ -5,11 +5,11 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
-    using UnityEngine.InputSystem.EnhancedTouch;
+using UnityEngine;
+using UnityEngine.InputSystem.EnhancedTouch;
 
+namespace Utilities
+{
     internal static class InputBootstrap
     {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]

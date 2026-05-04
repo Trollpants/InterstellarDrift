@@ -5,14 +5,14 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
+namespace GUI
+{
     /// <summary>
     ///  Instantiates and defines methods for ease of setting up targets for the UI-pointers.
     /// </summary>
-    public class PointerFactory : MonoBehaviour
+    public sealed class PointerFactory : MonoBehaviour
     {
         private GameObject prefabPointer;
         private bool isInitialized;
@@ -31,8 +31,7 @@ namespace InterstellarDrift
         public void CreateNewPointer(Transform mainTarget, Transform secondaryTarget, bool clampToScreen, bool deactivateAtTarget)
         {
             // 1. Instantiate new pointer from prefab
-            var pointerGo = Instantiate(prefabPointer);
-            pointerGo.transform.SetParent(transform, false);
+            var pointerGo = Instantiate(prefabPointer, transform, false);
 
             // 2. Get follow-script and set target and initialize
             var followScript = pointerGo.GetComponent<GUIElementFollowTarget>();

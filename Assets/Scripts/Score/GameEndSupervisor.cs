@@ -5,11 +5,14 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using Data;
+using GUI;
+using UnityEngine;
 
-    public class GameEndSupervisor : MonoBehaviour
+namespace Score
+{
+    [RequireComponent(typeof(Canvas))]
+    public sealed class GameEndSupervisor : MonoBehaviour
     {
         public AnimateData ScoreAnimateData;
         public AnimateData TimeAnimateData;
@@ -27,10 +30,7 @@ namespace InterstellarDrift
             isInitialized = true;
         }
 
-        private void Start()
-        {
-            Init();
-        }
+        private void Start() => Init();
 
         private void OnEnable()
         {
@@ -39,26 +39,27 @@ namespace InterstellarDrift
                 return;
             }
 
+            var selfCanvas = GetComponent<Canvas>();
+
             // Deactivate all other Canvases
             foreach (var canvas in FindObjectsByType<Canvas>())
             {
-                if (canvas == GetComponent<Canvas>())
+                if (canvas != selfCanvas)
                 {
-                    continue;
+                    canvas.gameObject.SetActive(false);
                 }
-
-                canvas.gameObject.SetActive(false);
             }
 
-            if (GameMode.Instance.CurrentMode == GameMode.Mode.Standard)
+            switch (GameMode.GameMode.Instance.CurrentMode)
             {
-                ScoreAnimateData.PlayAnimation();
-                TimeAnimateData.gameObject.SetActive(false);
-            }
-            else if (GameMode.Instance.CurrentMode == GameMode.Mode.Time)
-            {
-                ScoreAnimateData.PlayAnimation();
-                TimeAnimateData.PlayAnimation();
+                case GameMode.GameMode.Mode.Standard:
+                    ScoreAnimateData.PlayAnimation();
+                    TimeAnimateData.gameObject.SetActive(false);
+                    break;
+                case GameMode.GameMode.Mode.Time:
+                    ScoreAnimateData.PlayAnimation();
+                    TimeAnimateData.PlayAnimation();
+                    break;
             }
 
             // Tell the data tracker that the session has ended

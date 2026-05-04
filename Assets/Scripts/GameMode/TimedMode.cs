@@ -5,12 +5,13 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
-    using UnityEngine.UI;
+using Data;
+using UnityEngine;
+using UnityEngine.UI;
 
-    public class TimedMode : MonoBehaviour
+namespace GameMode
+{
+    public sealed class TimedMode : MonoBehaviour
     {
         public Image FillableImage;
         public float CurrentTime;
@@ -26,10 +27,7 @@ namespace InterstellarDrift
             TotalSecondsAlive = 0;
         }
 
-        public void RefreshDuration()
-        {
-            CurrentTime = TimeLimit;
-        }
+        public void RefreshDuration() => CurrentTime = TimeLimit;
 
         private void Start()
         {

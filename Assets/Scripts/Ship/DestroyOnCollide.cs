@@ -3,20 +3,20 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
+namespace Ship
+{
     /// <summary>
     ///  Reloads the scene when a collision occurs.
     /// </summary>
-    public class DestroyOnCollide : MonoBehaviour
+    public sealed class DestroyOnCollide : MonoBehaviour
     {
         [SerializeField] private LayerMask _collisionLayers;
 
         private void OnCollisionEnter2D(Collision2D other)
         {
-            if ((1 << other.gameObject.layer & _collisionLayers) != 0)
+            if (((1 << other.gameObject.layer) & _collisionLayers) != 0)
             {
                 Destroy(gameObject);
             }

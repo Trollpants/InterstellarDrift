@@ -3,34 +3,19 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
-    public class AndroidBackButtonQuitApplication : MonoBehaviour
+namespace Utilities
+{
+    public sealed class AndroidBackButtonQuitApplication : MonoBehaviour
     {
 #if UNITY_ANDROID
         private GameInput _input;
 
-        private void Awake()
-        {
-            _input = new GameInput();
-        }
-
-        private void OnEnable()
-        {
-            _input.System.Enable();
-        }
-
-        private void OnDisable()
-        {
-            _input.System.Disable();
-        }
-
-        private void OnDestroy()
-        {
-            _input?.Dispose();
-        }
+        private void Awake() => _input = new GameInput();
+        private void OnEnable() => _input.System.Enable();
+        private void OnDisable() => _input.System.Disable();
+        private void OnDestroy() => _input?.Dispose();
 
         private void Update()
         {

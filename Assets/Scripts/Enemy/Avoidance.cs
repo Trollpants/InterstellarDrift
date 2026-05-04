@@ -5,14 +5,14 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using System;
-    using UnityEngine;
-    using UnityEngine.Events;
+using System;
+using UnityEngine;
+using UnityEngine.Events;
 
+namespace Enemy
+{
     [RequireComponent(typeof(Collider2D))]
-    public class Avoidance : MonoBehaviour
+    public sealed class Avoidance : MonoBehaviour
     {
         public Vector2Event OnSafePointCalculated;
 
@@ -38,7 +38,7 @@ namespace InterstellarDrift
     }
 
     [Serializable]
-    public class Vector2Event : UnityEvent<Vector2>
+    public sealed class Vector2Event : UnityEvent<Vector2>
     {
     }
 }

@@ -5,18 +5,15 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
-    public class EnemyController : BaseController
+namespace Controllers
+{
+    public sealed class EnemyController : BaseController
     {
         public GameObject player;
 
-        public static float AngleDir(Vector2 a, Vector2 b)
-        {
-            return (-a.x * b.y) + (a.y * b.x);
-        }
+        public static float AngleDir(Vector2 a, Vector2 b) => (-a.x * b.y) + (a.y * b.x);
 
         private void Start()
         {
@@ -26,12 +23,7 @@ namespace InterstellarDrift
 
         private void FixedUpdate()
         {
-            if (!IsInitialized)
-            {
-                return;
-            }
-
-            if (!player)
+            if (!IsInitialized || !player)
             {
                 return;
             }

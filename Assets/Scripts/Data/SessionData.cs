@@ -5,11 +5,11 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
-    public class SessionData
+namespace Data
+{
+    public sealed class SessionData
     {
         public SessionData()
         {
@@ -21,10 +21,7 @@ namespace InterstellarDrift
 
         public int MillisecondsSurvived { get; set; }
 
-        public int SecondsSurvived
-        {
-            get { return MillisecondsSurvived / 1000; }
-        }
+        public int SecondsSurvived => MillisecondsSurvived / 1000;
 
         public Texture2D FrontStarsTexture2D { get; set; }
         public Texture2D BackStarsTexture2D { get; set; }

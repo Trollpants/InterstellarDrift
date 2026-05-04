@@ -5,15 +5,17 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using System.Collections.Generic;
-    using UnityEngine;
+using System.Collections.Generic;
+using GameMode;
+using GUI;
+using UnityEngine;
 
+namespace Goals
+{
     /// <summary>
     ///  Spawns the goal the player must reach before his time runs out.
     /// </summary>
-    public class GoalHerder : MonoBehaviour
+    public sealed class GoalHerder : MonoBehaviour
     {
         private const float multiplierIncreaseRate = 0.1f;
         private const float maxMultiplier = 2f;
@@ -39,7 +41,7 @@ namespace InterstellarDrift
                 Debug.LogWarning("GoalHerder is lacking a reference to the ship's location.");
 #endif
                 var player = GameObject.FindWithTag("Player");
-                targetTransform = player?.transform ?? transform;
+                targetTransform = player != null ? player.transform : transform;
             }
 
             if (GameObject.FindWithTag("PointerCanvas"))
@@ -98,7 +100,7 @@ namespace InterstellarDrift
             }
 
             // Instantiate new goal and child it to the herder-object
-            var goal = Instantiate(goalPrefab, position, Quaternion.identity) as GameObject;
+            var goal = Instantiate(goalPrefab, position, Quaternion.identity);
             goal.transform.parent = transform;
 
             // Attach listener to removal event
@@ -112,7 +114,7 @@ namespace InterstellarDrift
 
         private void RemoveGoal(GameObject goal, GameObject triggeringObject)
         {
-            if (_timerDisplay && GameMode.Instance.CurrentMode == GameMode.Mode.Time)
+            if (_timerDisplay && GameMode.GameMode.Instance.CurrentMode is GameMode.GameMode.Mode.Time)
             {
                 _timerDisplay.RefreshDuration();
             }

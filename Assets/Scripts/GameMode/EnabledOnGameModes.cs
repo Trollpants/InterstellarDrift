@@ -5,14 +5,13 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
-    using Mode = GameMode.Mode;
+using UnityEngine;
 
-    public class EnabledOnGameModes : MonoBehaviour
+namespace GameMode
+{
+    public sealed class EnabledOnGameModes : MonoBehaviour
     {
-        public Mode[] Modes = { Mode.Standard };
+        public GameMode.Mode[] Modes = { GameMode.Mode.Standard };
 
         private void Awake()
         {

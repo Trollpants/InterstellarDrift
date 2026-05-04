@@ -5,15 +5,18 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using Audio;
+using Ship;
+using UnityEngine;
 
+namespace Controllers
+{
     /// <summary>
     ///  Provides the base functionality for ship-movement using 2d-physics.
     /// </summary>
+    [RequireComponent(typeof(EffectsShepherd))]
     [RequireComponent(typeof(Rigidbody2D))]
-    public class BaseController : MonoBehaviour
+    public abstract class BaseController : MonoBehaviour
     {
         private const ForceMode2D forceMode = ForceMode2D.Impulse;
 
@@ -31,20 +34,20 @@ namespace InterstellarDrift
 
         public bool IsEngineOn
         {
-            get { return _isEngineOn; }
-            set { _isEngineOn = value; }
+            get => _isEngineOn;
+            set => _isEngineOn = value;
         }
 
         public bool IsInputActive
         {
-            get { return _isInputActive; }
-            protected set { _isInputActive = value; }
+            get => _isInputActive;
+            protected set => _isInputActive = value;
         }
 
         public bool IsMovingRight
         {
-            get { return _isMovingRight; }
-            protected set { _isMovingRight = value; }
+            get => _isMovingRight;
+            protected set => _isMovingRight = value;
         }
 
         protected bool IsInitialized { get; set; }
@@ -82,7 +85,7 @@ namespace InterstellarDrift
                 Effects.DeactivateBoostParticles();
             }
 
-            CachedRigidbody2D.AddForce(transform.up * forwardForce * Time.fixedDeltaTime, forceMode); // Provides motion in the forward direction
+            CachedRigidbody2D.AddForce(forwardForce * Time.fixedDeltaTime * transform.up, forceMode); // Provides motion in the forward direction
 
             if (SoundManager.Instance != null)
             {
@@ -95,11 +98,8 @@ namespace InterstellarDrift
             CachedRigidbody2D.AddTorque(turnForce * Time.fixedDeltaTime, forceMode);
 
             // Activate the right adjustment-thruster visuals
-            if (!Effects.Equals(null))
-            {
-                Effects.ActivateThruster(Thruster.Right);
-                Effects.DeactivateThruster(Thruster.Left);
-            }
+            Effects.ActivateThruster(Thruster.Right);
+            Effects.DeactivateThruster(Thruster.Left);
 
             if (SoundManager.Instance != null)
             {
@@ -112,11 +112,8 @@ namespace InterstellarDrift
             CachedRigidbody2D.AddTorque(-turnForce * Time.fixedDeltaTime, forceMode);
 
             // Activate the left adjustment-thruster visuals
-            if (!Effects.Equals(null))
-            {
-                Effects.ActivateThruster(Thruster.Left);
-                Effects.DeactivateThruster(Thruster.Right);
-            }
+            Effects.ActivateThruster(Thruster.Left);
+            Effects.DeactivateThruster(Thruster.Right);
 
             if (SoundManager.Instance != null)
             {
@@ -136,7 +133,7 @@ namespace InterstellarDrift
                 Effects.ActivateBoostParticles();
             }
 
-            CachedRigidbody2D.AddForce(transform.up * forwardForce * _boostModifier * Time.fixedDeltaTime, forceMode);
+            CachedRigidbody2D.AddForce(_boostModifier * forwardForce * Time.fixedDeltaTime * transform.up, forceMode);
 
             if (SoundManager.Instance != null)
             {
@@ -151,7 +148,6 @@ namespace InterstellarDrift
 #if DEBUG
                 Debug.LogWarning("Controller not initialized!");
 #endif
-
                 return;
             }
 
@@ -194,11 +190,8 @@ namespace InterstellarDrift
 
         private void TurnOffThrusters()
         {
-            if (!Effects.Equals(null))
-            {
-                Effects.DeactivateThruster(Thruster.Left);
-                Effects.DeactivateThruster(Thruster.Right);
-            }
+            Effects.DeactivateThruster(Thruster.Left);
+            Effects.DeactivateThruster(Thruster.Right);
 
             if (SoundManager.Instance != null)
             {

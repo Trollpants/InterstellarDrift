@@ -5,14 +5,16 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using Audio;
+using Score;
+using UnityEngine;
 
+namespace Goals
+{
     /// <summary>
     ///  Handles trigger-detection.
     /// </summary>
-    public class Goal : MonoBehaviour
+    public sealed class Goal : MonoBehaviour
     {
         [SerializeField] private Sound _triggerSound = Sound.Checkpoint;
 

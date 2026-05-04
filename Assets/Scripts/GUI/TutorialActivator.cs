@@ -5,23 +5,16 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using CloudOnce;
-    using UnityEngine;
+using CloudOnce;
+using UnityEngine;
 
-    public class TutorialActivator : MonoBehaviour
+namespace GUI
+{
+    public sealed class TutorialActivator : MonoBehaviour
     {
         private GameObject tutorialCanvas;
 
-        private void Awake()
-        {
-            tutorialCanvas = GameObject.FindWithTag("TutorialCanvas");
-        }
-
-        private void Start()
-        {
-            tutorialCanvas.SetActive(!CloudVariables.HasFinishedTutorial);
-        }
+        private void Awake() => tutorialCanvas = GameObject.FindWithTag("TutorialCanvas");
+        private void Start() => tutorialCanvas.SetActive(!CloudVariables.HasFinishedTutorial);
     }
 }

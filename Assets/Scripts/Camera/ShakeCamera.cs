@@ -5,12 +5,12 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using DG.Tweening;
-    using UnityEngine;
+using DG.Tweening;
+using UnityEngine;
 
-    public class ShakeCamera : MonoBehaviour
+namespace Camera
+{
+    public sealed class ShakeCamera : MonoBehaviour
     {
         [SerializeField] private float _duration = 2f;
         [SerializeField] private float _shakeStrength = 2f;
@@ -26,9 +26,6 @@ namespace InterstellarDrift
             }
         }
 
-        private void Awake()
-        {
-            shakeTarget = GameObject.FindWithTag("MainCamera").transform;
-        }
+        private void Awake() => shakeTarget = GameObject.FindWithTag("MainCamera").transform;
     }
 }

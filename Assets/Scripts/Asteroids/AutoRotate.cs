@@ -5,30 +5,27 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace Trollpants.UtilityBelt.Misc
-{
-    using UnityEngine;
+using UnityEngine;
 
-    public class AutoRotate : MonoBehaviour
+namespace Asteroids
+{
+    public sealed class AutoRotate : MonoBehaviour
     {
         [SerializeField] private Vector3 _rotation;
         [SerializeField] private Space _space = Space.Self;
 
         public Vector3 Rotation
         {
-            get { return _rotation; }
-            set { _rotation = value; }
+            get => _rotation;
+            set => _rotation = value;
         }
 
         public Space Space
         {
-            get { return _space; }
-            set { _space = value; }
+            get => _space;
+            set => _space = value;
         }
 
-        private void Update()
-        {
-            transform.Rotate(_rotation * Time.deltaTime, _space);
-        }
+        private void Update() => transform.Rotate(_rotation * Time.deltaTime, _space);
     }
 }

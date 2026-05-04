@@ -3,12 +3,12 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace InterstellarDrift
-{
-    using System.Collections;
-    using System.Collections.Generic;
-    using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
+namespace Ship
+{
     public enum Thruster
     {
         Left,
@@ -20,7 +20,7 @@ namespace InterstellarDrift
     /// Finds all particle systems in gameobjects with the 'Effect' layer, and sorts them into lists based on tags.
     /// Defines methods for activating thrusters at specific sides of the ship. Sides are set based on tags.
     /// </summary>
-    public class EffectsShepherd : MonoBehaviour
+    public sealed class EffectsShepherd : MonoBehaviour
     {
         private const int layer = 8; // Effect
         private static readonly Color s_boostColor = new Color32(255, 0, 145, 255);
@@ -99,25 +99,21 @@ namespace InterstellarDrift
 
         public void ActivateThruster(Thruster toActivate, float duration)
         {
-            if (!isInitialized)
+            if (isInitialized)
             {
-                return;
+                var thruster = ThrusterToParticleSystem(toActivate);
+                StartCoroutine(ActivateParticlesForDuration(thruster, duration));
             }
-
-            var thruster = ThrusterToParticleSystem(toActivate);
-            StartCoroutine(ActivateParticlesForDuration(thruster, duration));
         }
 
         public void ActivateThruster(Thruster toActivate)
         {
-            if (!isInitialized)
+            if (isInitialized)
             {
-                return;
-            }
-
-            foreach (var partSys in ThrusterToParticleSystem(toActivate))
-            {
-                partSys.Play();
+                foreach (var partSys in ThrusterToParticleSystem(toActivate))
+                {
+                    partSys.Play();
+                }
             }
         }
 

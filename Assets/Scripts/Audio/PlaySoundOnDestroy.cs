@@ -5,11 +5,11 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using UnityEngine;
+using UnityEngine;
 
-    public class PlaySoundOnDestroy : MonoBehaviour
+namespace Audio
+{
+    public sealed class PlaySoundOnDestroy : MonoBehaviour
     {
         public Sound SoundOnDestroy = Sound.Death;
 

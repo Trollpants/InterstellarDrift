@@ -1,0 +1,3103 @@
+diff --git a/Assets/Scripts/Asteroids/AutoRotate.cs b/Assets/Scripts/Asteroids/AutoRotate.cs
+index edbeb04..ea9379b 100644
+--- a/Assets/Scripts/Asteroids/AutoRotate.cs
++++ b/Assets/Scripts/Asteroids/AutoRotate.cs
+@@ -5,30 +5,27 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace Trollpants.UtilityBelt.Misc
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
+-    public class AutoRotate : MonoBehaviour
++namespace Asteroids
++{
++    public sealed class AutoRotate : MonoBehaviour
+     {
+         [SerializeField] private Vector3 _rotation;
+         [SerializeField] private Space _space = Space.Self;
+ 
+         public Vector3 Rotation
+         {
+-            get { return _rotation; }
+-            set { _rotation = value; }
++            get => _rotation;
++            set => _rotation = value;
+         }
+ 
+         public Space Space
+         {
+-            get { return _space; }
+-            set { _space = value; }
++            get => _space;
++            set => _space = value;
+         }
+ 
+-        private void Update()
+-        {
+-            transform.Rotate(_rotation * Time.deltaTime, _space);
+-        }
++        private void Update() => transform.Rotate(_rotation * Time.deltaTime, _space);
+     }
+ }
+diff --git a/Assets/Scripts/Asteroids/Planetoid.cs b/Assets/Scripts/Asteroids/Planetoid.cs
+index 1ab8765..027c24c 100644
+--- a/Assets/Scripts/Asteroids/Planetoid.cs
++++ b/Assets/Scripts/Asteroids/Planetoid.cs
+@@ -5,14 +5,16 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using PoolingSystem;
++using UnityEngine;
+ 
++namespace Asteroids
++{
+     /// <summary>
+     ///  Handles particle system activation/deactivation for the planetoids.
+     /// </summary>
+-    public class Planetoid : MonoBehaviour, ISpawnable
++    [RequireComponent(typeof(Rigidbody2D))]
++    public sealed class Planetoid : MonoBehaviour, ISpawnable
+     {
+         [SerializeField] private float _planetoidMaxForce = 2f;
+         [SerializeField] private float _planetoidMaxTorque = 5f;
+@@ -30,17 +32,14 @@ namespace InterstellarDrift
+                 return;
+             }
+ 
+-            Invoke("Init", 0.2f);
++            Invoke(nameof(Init), 0.2f);
+         }
+ 
+         void ISpawnable.OnRecycled()
+         {
+         }
+ 
+-        private void Awake()
+-        {
+-            cachedRigidBody2D = GetComponent<Rigidbody2D>();
+-        }
++        private void Awake() => cachedRigidBody2D = GetComponent<Rigidbody2D>();
+ 
+         private void Init()
+         {
+diff --git a/Assets/Scripts/Audio/PlaySoundOnDestroy.cs b/Assets/Scripts/Audio/PlaySoundOnDestroy.cs
+index f3313db..6bf51db 100644
+--- a/Assets/Scripts/Audio/PlaySoundOnDestroy.cs
++++ b/Assets/Scripts/Audio/PlaySoundOnDestroy.cs
+@@ -5,11 +5,11 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
+-    public class PlaySoundOnDestroy : MonoBehaviour
++namespace Audio
++{
++    public sealed class PlaySoundOnDestroy : MonoBehaviour
+     {
+         public Sound SoundOnDestroy = Sound.Death;
+ 
+diff --git a/Assets/Scripts/Audio/SoundEventHook.cs b/Assets/Scripts/Audio/SoundEventHook.cs
+index 2b5b6c4..cca61cc 100644
+--- a/Assets/Scripts/Audio/SoundEventHook.cs
++++ b/Assets/Scripts/Audio/SoundEventHook.cs
+@@ -5,14 +5,14 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
++namespace Audio
++{
+     /// <summary>
+     ///  Provides helper-methods for inspector-events to hook into the soundmanager-singleton.
+     /// </summary>
+-    public class SoundEventHook : MonoBehaviour
++    public sealed class SoundEventHook : MonoBehaviour
+     {
+         [SerializeField] private Sound _sound = Sound.Score;
+ 
+diff --git a/Assets/Scripts/Audio/SoundManager.cs b/Assets/Scripts/Audio/SoundManager.cs
+index 0128477..515c52d 100644
+--- a/Assets/Scripts/Audio/SoundManager.cs
++++ b/Assets/Scripts/Audio/SoundManager.cs
+@@ -5,12 +5,12 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using CloudOnce;
+-    using UnityEngine;
+-    using UnityEngine.Audio;
++using CloudOnce;
++using UnityEngine;
++using UnityEngine.Audio;
+ 
++namespace Audio
++{
+     /// <summary>
+     /// All sounds that can be played on an event
+     /// </summary>
+@@ -41,7 +41,7 @@ namespace InterstellarDrift
+         Effect
+     }
+ 
+-    public class SoundManager : MonoBehaviour
++    public sealed class SoundManager : MonoBehaviour
+     {
+         private static SoundManager s_instance;
+ 
+@@ -69,8 +69,8 @@ namespace InterstellarDrift
+ 
+         public static SoundManager Instance
+         {
+-            get { return s_instance; }
+-            set
++            get => s_instance;
++            private set
+             {
+                 if (s_instance != null)
+                 {
+@@ -97,8 +97,6 @@ namespace InterstellarDrift
+         {
+             switch (sound)
+             {
+-                case Sound.None:
+-                    break;
+                 case Sound.Death:
+                     if (!deathSource.isPlaying)
+                     {
+@@ -113,10 +111,6 @@ namespace InterstellarDrift
+                         checkpointSource.Play();
+                     }
+ 
+-                    break;
+-                case Sound.MainBoost:
+-                    break;
+-                case Sound.SideBoost:
+                     break;
+                 case Sound.Button:
+                     buttonSource.clip = buttonSounds[Random.Range(0, 3)];
+@@ -152,6 +146,10 @@ namespace InterstellarDrift
+                     copDeathSource.clip = copDeathSounds[Random.Range(0, 4)];
+                     copDeathSource.Play();
+                     break;
++                case Sound.None:
++                case Sound.MainBoost:
++                case Sound.SideBoost:
++                    break;
+             }
+         }
+ 
+@@ -159,18 +157,12 @@ namespace InterstellarDrift
+         {
+             switch (sound)
+             {
+-                case Sound.None:
+-                    break;
+                 case Sound.Death:
+                     deathSource.Stop();
+                     break;
+                 case Sound.Checkpoint:
+                     checkpointSource.Stop();
+                     break;
+-                case Sound.MainBoost:
+-                    break;
+-                case Sound.SideBoost:
+-                    break;
+                 case Sound.Button:
+                     buttonSource.Stop();
+                     break;
+@@ -186,6 +178,10 @@ namespace InterstellarDrift
+                 case Sound.CopDeath:
+                     copDeathSource.Stop();
+                     break;
++                case Sound.None:
++                case Sound.MainBoost:
++                case Sound.SideBoost:
++                    break;
+             }
+         }
+ 
+diff --git a/Assets/Scripts/Audio/ToggleMute.cs b/Assets/Scripts/Audio/ToggleMute.cs
+index 9c4ea7b..33a1a0c 100644
+--- a/Assets/Scripts/Audio/ToggleMute.cs
++++ b/Assets/Scripts/Audio/ToggleMute.cs
+@@ -5,13 +5,14 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using CloudOnce;
+-    using UnityEngine;
+-    using UnityEngine.UI;
++using CloudOnce;
++using UnityEngine;
++using UnityEngine.UI;
+ 
+-    public class ToggleMute : MonoBehaviour
++namespace Audio
++{
++    [RequireComponent(typeof(Toggle))]
++    public sealed class ToggleMute : MonoBehaviour
+     {
+         private static void ToggleMuteOnEvent(bool soundOn)
+         {
+diff --git a/Assets/Scripts/Camera/CameraFollow.cs b/Assets/Scripts/Camera/CameraFollow.cs
+index e7ef125..67b0e84 100644
+--- a/Assets/Scripts/Camera/CameraFollow.cs
++++ b/Assets/Scripts/Camera/CameraFollow.cs
+@@ -5,15 +5,15 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
++namespace Camera
++{
+     /// <summary>
+     /// Drives the position of a gameobject containing cameras.
+     /// IMPORTANT: Assumes that the script is on a container-gameobject, with the cameras you want driven around set as children.
+     /// </summary>
+-    public class CameraFollow : MonoBehaviour
++    public sealed class CameraFollow : MonoBehaviour
+     {
+         [SerializeField]
+         private bool _initializeSelf;
+@@ -37,7 +37,7 @@ namespace InterstellarDrift
+         private Vector3 dynamicOffsetVelocity;
+ 
+         private float cameraUnitDepth;
+-        private Camera cachedCamera;
++        private UnityEngine.Camera cachedCamera;
+ 
+         private Vector3 screenMiddle;
+         private float xAxisExtent;
+@@ -65,7 +65,7 @@ namespace InterstellarDrift
+             ////  Set the initial values
+             originalValues = transform.position;
+ 
+-            cachedCamera = GetComponentInChildren<Camera>();
++            cachedCamera = GetComponentInChildren<UnityEngine.Camera>();
+             cameraUnitDepth = cachedCamera.orthographicSize;
+ 
+             CalculateExtents();
+@@ -147,21 +147,14 @@ namespace InterstellarDrift
+             // Used to draw the cross in the middle of the screen in debug-mode, in editor
+             for (var i = 0; i < _edgeVectors.Length; i++)
+             {
+-                switch (i)
++                _edgeVectors[i] = i switch
+                 {
+-                    case 0: // top
+-                        _edgeVectors[i] = cachedCamera.ViewportToWorldPoint(new Vector3(0.5f, 1f, cameraUnitDepth));
+-                        break;
+-                    case 1: // right
+-                        _edgeVectors[i] = cachedCamera.ViewportToWorldPoint(new Vector3(1f, 0.5f, cameraUnitDepth));
+-                        break;
+-                    case 2: // bottom
+-                        _edgeVectors[i] = cachedCamera.ViewportToWorldPoint(new Vector3(0.5f, 0f, cameraUnitDepth));
+-                        break;
+-                    case 3: // left
+-                        _edgeVectors[i] = cachedCamera.ViewportToWorldPoint(new Vector3(0f, 0.5f, cameraUnitDepth));
+-                        break;
+-                }
++                    0 => cachedCamera.ViewportToWorldPoint(new Vector3(0.5f, 1f, cameraUnitDepth)), // top
++                    1 => cachedCamera.ViewportToWorldPoint(new Vector3(1f, 0.5f, cameraUnitDepth)), // right
++                    2 => cachedCamera.ViewportToWorldPoint(new Vector3(0.5f, 0f, cameraUnitDepth)), // bottom
++                    3 => cachedCamera.ViewportToWorldPoint(new Vector3(0f, 0.5f, cameraUnitDepth)), // left
++                    _ => _edgeVectors[i]
++                };
+             }
+ #endif
+         }
+diff --git a/Assets/Scripts/Camera/CameraSizeRelativeToVelocity.cs b/Assets/Scripts/Camera/CameraSizeRelativeToVelocity.cs
+index 9cd172e..e8fcf98 100644
+--- a/Assets/Scripts/Camera/CameraSizeRelativeToVelocity.cs
++++ b/Assets/Scripts/Camera/CameraSizeRelativeToVelocity.cs
+@@ -5,17 +5,17 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
++namespace Camera
++{
+     public class CameraSizeRelativeToVelocity : MonoBehaviour
+     {
+         [SerializeField] private bool _initializeSelf;
+ 
+         // CAMERA SIZE VARIABLES
+         public Rigidbody2D TargetRigidbody2D;
+-        public Camera[] Cameras;
++        public UnityEngine.Camera[] Cameras;
+ 
+         [SerializeField] private float _minCameraSize = 15f;
+         [SerializeField] private float _maxCameraSize = 30f;
+diff --git a/Assets/Scripts/Camera/GenerateStarBackground.cs b/Assets/Scripts/Camera/GenerateStarBackground.cs
+index 94cd38f..d2f40ab 100644
+--- a/Assets/Scripts/Camera/GenerateStarBackground.cs
++++ b/Assets/Scripts/Camera/GenerateStarBackground.cs
+@@ -5,17 +5,18 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using System;
+-    using UnityEngine;
++using System;
++using Data;
++using UnityEngine;
+ 
++namespace Camera
++{
+     [RequireComponent(typeof(MeshRenderer))]
+-    public class GenerateStarBackground : MonoBehaviour
++    public sealed class GenerateStarBackground : MonoBehaviour
+     {
+         private static readonly Color s_backgroundColor = new Color32(18, 18, 43, 255);
+ 
+-        [SerializeField] private Camera _sourceCamera;
++        [SerializeField] private UnityEngine.Camera _sourceCamera;
+         [SerializeField] private ParticleSystem _starParticleSystem;
+         [SerializeField] private BackgroundType _backgroundType;
+         [SerializeField] private Shader _backShader;
+@@ -28,7 +29,7 @@ namespace InterstellarDrift
+             Back
+         }
+ 
+-        private static Texture2D TakeScreenshot(Camera screenshotCamera, int width = 2048, int height = 1024)
++        private static Texture2D TakeScreenshot(UnityEngine.Camera screenshotCamera, int width = 2048, int height = 1024)
+         {
+             if (width < 1 || height < 1)
+             {
+diff --git a/Assets/Scripts/Camera/ScollingBackground.cs b/Assets/Scripts/Camera/ScollingBackground.cs
+deleted file mode 100644
+index 1b5f777..0000000
+--- a/Assets/Scripts/Camera/ScollingBackground.cs
++++ /dev/null
+@@ -1,35 +0,0 @@
+-﻿// --------------------------------------------------------------------------------------------------------------------
+-// <copyright file="ScollingBackground.cs" company="Jan Ivar Z. Carlsen">
+-// Copyright (c) 2018 Jan Ivar Z. Carlsen. All rights reserved.
+-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+-// </copyright>
+-// --------------------------------------------------------------------------------------------------------------------
+-
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
+-
+-    public class ScollingBackground : MonoBehaviour
+-    {
+-        public Camera BackgroundCamera;
+-        public float Speed = 1;
+-
+-        private MeshRenderer background;
+-        private Material space;
+-        private Vector3 oldCameraPosistion;
+-
+-        private void Awake()
+-        {
+-            background = GetComponent<MeshRenderer>();
+-            space = background.material;
+-        }
+-
+-        private void Update()
+-        {
+-            var newCameraPosistion = BackgroundCamera.transform.position;
+-            var deltaPosistion = newCameraPosistion - oldCameraPosistion;
+-            space.mainTextureOffset += (Vector2)deltaPosistion.normalized * Time.deltaTime * Speed;
+-            oldCameraPosistion = BackgroundCamera.transform.position;
+-        }
+-    }
+-}
+diff --git a/Assets/Scripts/Camera/ScollingBackground.cs.meta b/Assets/Scripts/Camera/ScollingBackground.cs.meta
+deleted file mode 100644
+index 89db4f2..0000000
+--- a/Assets/Scripts/Camera/ScollingBackground.cs.meta
++++ /dev/null
+@@ -1,11 +0,0 @@
+-fileFormatVersion: 2
+-guid: 0e2ff8e9fdf40fc45bc463ab0a43dfd0
+-MonoImporter:
+-  externalObjects: {}
+-  serializedVersion: 2
+-  defaultReferences: []
+-  executionOrder: 0
+-  icon: {instanceID: 0}
+-  userData: 
+-  assetBundleName: 
+-  assetBundleVariant: 
+diff --git a/Assets/Scripts/Camera/SetGeneratedStars.cs b/Assets/Scripts/Camera/SetGeneratedStars.cs
+index 0f891f5..d2c1941 100644
+--- a/Assets/Scripts/Camera/SetGeneratedStars.cs
++++ b/Assets/Scripts/Camera/SetGeneratedStars.cs
+@@ -5,13 +5,14 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using System;
+-    using UnityEngine;
++using System;
++using Data;
++using UnityEngine;
+ 
++namespace Camera
++{
+     [RequireComponent(typeof(MeshRenderer))]
+-    public class SetGeneratedStars : MonoBehaviour
++    public sealed class SetGeneratedStars : MonoBehaviour
+     {
+         [SerializeField] private BackgroundType _backgroundType;
+ 
+@@ -25,17 +26,12 @@ namespace InterstellarDrift
+         {
+             var meshRenderer = GetComponent<MeshRenderer>();
+ 
+-            switch (_backgroundType)
++            meshRenderer.material.mainTexture = _backgroundType switch
+             {
+-                case BackgroundType.Front:
+-                    meshRenderer.material.mainTexture = TrackedData.Instance.SessionData.FrontStarsTexture2D;
+-                    break;
+-                case BackgroundType.Back:
+-                    meshRenderer.material.mainTexture = TrackedData.Instance.SessionData.BackStarsTexture2D;
+-                    break;
+-                default:
+-                    throw new ArgumentOutOfRangeException();
+-            }
++                BackgroundType.Front => TrackedData.Instance.SessionData.FrontStarsTexture2D,
++                BackgroundType.Back => TrackedData.Instance.SessionData.BackStarsTexture2D,
++                _ => throw new ArgumentOutOfRangeException(null, _backgroundType, null)
++            };
+         }
+     }
+ }
+diff --git a/Assets/Scripts/Camera/ShakeCamera.cs b/Assets/Scripts/Camera/ShakeCamera.cs
+index 464a58b..cbbebfb 100644
+--- a/Assets/Scripts/Camera/ShakeCamera.cs
++++ b/Assets/Scripts/Camera/ShakeCamera.cs
+@@ -5,12 +5,12 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using DG.Tweening;
+-    using UnityEngine;
++using DG.Tweening;
++using UnityEngine;
+ 
+-    public class ShakeCamera : MonoBehaviour
++namespace Camera
++{
++    public sealed class ShakeCamera : MonoBehaviour
+     {
+         [SerializeField] private float _duration = 2f;
+         [SerializeField] private float _shakeStrength = 2f;
+@@ -26,9 +26,6 @@ namespace InterstellarDrift
+             }
+         }
+ 
+-        private void Awake()
+-        {
+-            shakeTarget = GameObject.FindWithTag("MainCamera").transform;
+-        }
++        private void Awake() => shakeTarget = GameObject.FindWithTag("MainCamera").transform;
+     }
+ }
+diff --git a/Assets/Scripts/Controllers/BaseController.cs b/Assets/Scripts/Controllers/BaseController.cs
+index da58d4b..c66135a 100644
+--- a/Assets/Scripts/Controllers/BaseController.cs
++++ b/Assets/Scripts/Controllers/BaseController.cs
+@@ -5,15 +5,18 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using Audio;
++using Ship;
++using UnityEngine;
+ 
++namespace Controllers
++{
+     /// <summary>
+     ///  Provides the base functionality for ship-movement using 2d-physics.
+     /// </summary>
++    [RequireComponent(typeof(EffectsShepherd))]
+     [RequireComponent(typeof(Rigidbody2D))]
+-    public class BaseController : MonoBehaviour
++    public abstract class BaseController : MonoBehaviour
+     {
+         private const ForceMode2D forceMode = ForceMode2D.Impulse;
+ 
+@@ -31,20 +34,20 @@ namespace InterstellarDrift
+ 
+         public bool IsEngineOn
+         {
+-            get { return _isEngineOn; }
+-            set { _isEngineOn = value; }
++            get => _isEngineOn;
++            set => _isEngineOn = value;
+         }
+ 
+         public bool IsInputActive
+         {
+-            get { return _isInputActive; }
+-            protected set { _isInputActive = value; }
++            get => _isInputActive;
++            protected set => _isInputActive = value;
+         }
+ 
+         public bool IsMovingRight
+         {
+-            get { return _isMovingRight; }
+-            protected set { _isMovingRight = value; }
++            get => _isMovingRight;
++            protected set => _isMovingRight = value;
+         }
+ 
+         protected bool IsInitialized { get; set; }
+@@ -82,7 +85,7 @@ namespace InterstellarDrift
+                 Effects.DeactivateBoostParticles();
+             }
+ 
+-            CachedRigidbody2D.AddForce(transform.up * forwardForce * Time.fixedDeltaTime, forceMode); // Provides motion in the forward direction
++            CachedRigidbody2D.AddForce(forwardForce * Time.fixedDeltaTime * transform.up, forceMode); // Provides motion in the forward direction
+ 
+             if (SoundManager.Instance != null)
+             {
+@@ -136,7 +139,7 @@ namespace InterstellarDrift
+                 Effects.ActivateBoostParticles();
+             }
+ 
+-            CachedRigidbody2D.AddForce(transform.up * forwardForce * _boostModifier * Time.fixedDeltaTime, forceMode);
++            CachedRigidbody2D.AddForce(_boostModifier * forwardForce * Time.fixedDeltaTime * transform.up, forceMode);
+ 
+             if (SoundManager.Instance != null)
+             {
+@@ -151,7 +154,6 @@ namespace InterstellarDrift
+ #if DEBUG
+                 Debug.LogWarning("Controller not initialized!");
+ #endif
+-
+                 return;
+             }
+ 
+diff --git a/Assets/Scripts/Controllers/EnemyController.cs b/Assets/Scripts/Controllers/EnemyController.cs
+index 5192339..f6dce2c 100644
+--- a/Assets/Scripts/Controllers/EnemyController.cs
++++ b/Assets/Scripts/Controllers/EnemyController.cs
+@@ -5,18 +5,15 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
+-    public class EnemyController : BaseController
++namespace Controllers
++{
++    public sealed class EnemyController : BaseController
+     {
+         public GameObject player;
+ 
+-        public static float AngleDir(Vector2 a, Vector2 b)
+-        {
+-            return (-a.x * b.y) + (a.y * b.x);
+-        }
++        public static float AngleDir(Vector2 a, Vector2 b) => (-a.x * b.y) + (a.y * b.x);
+ 
+         private void Start()
+         {
+@@ -26,12 +23,7 @@ namespace InterstellarDrift
+ 
+         private void FixedUpdate()
+         {
+-            if (!IsInitialized)
+-            {
+-                return;
+-            }
+-
+-            if (!player)
++            if (!IsInitialized || !player)
+             {
+                 return;
+             }
+diff --git a/Assets/Scripts/Controllers/KeyboardController.cs b/Assets/Scripts/Controllers/KeyboardController.cs
+index 660f8fd..9308528 100644
+--- a/Assets/Scripts/Controllers/KeyboardController.cs
++++ b/Assets/Scripts/Controllers/KeyboardController.cs
+@@ -5,33 +5,18 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
+-    public class KeyboardController : BaseController
++namespace Controllers
++{
++    public sealed class KeyboardController : BaseController
+     {
+         private GameInput _input;
+ 
+-        private void Awake()
+-        {
+-            _input = new GameInput();
+-        }
+-
+-        private void OnEnable()
+-        {
+-            _input.Keyboard.Enable();
+-        }
+-
+-        private void OnDisable()
+-        {
+-            _input.Keyboard.Disable();
+-        }
+-
+-        private void OnDestroy()
+-        {
+-            _input?.Dispose();
+-        }
++        private void Awake() => _input = new GameInput();
++        private void OnEnable() => _input.Keyboard.Enable();
++        private void OnDisable() => _input.Keyboard.Disable();
++        private void OnDestroy() => _input?.Dispose();
+ 
+         private void Update()
+         {
+diff --git a/Assets/Scripts/Controllers/OneClickController.cs b/Assets/Scripts/Controllers/OneClickController.cs
+index 1b0cac9..7099748 100644
+--- a/Assets/Scripts/Controllers/OneClickController.cs
++++ b/Assets/Scripts/Controllers/OneClickController.cs
+@@ -5,34 +5,19 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
++namespace Controllers
+ {
+     /// <summary>
+     ///  Provides an implementation of the BaseController that uses a single mouse-click or touch.
+     /// </summary>
+-    public class OneClickController : BaseController
++    public sealed class OneClickController : BaseController
+     {
+         private GameInput _input;
+ 
+-        private void Awake()
+-        {
+-            _input = new GameInput();
+-        }
+-
+-        private void OnEnable()
+-        {
+-            _input.OneClick.Enable();
+-        }
+-
+-        private void OnDisable()
+-        {
+-            _input.OneClick.Disable();
+-        }
+-
+-        private void OnDestroy()
+-        {
+-            _input?.Dispose();
+-        }
++        private void Awake() => _input = new GameInput();
++        private void OnEnable() => _input.OneClick.Enable();
++        private void OnDisable() => _input.OneClick.Disable();
++        private void OnDestroy() => _input?.Dispose();
+ 
+         private void Update()
+         {
+diff --git a/Assets/Scripts/Controllers/TwoButtonController.cs b/Assets/Scripts/Controllers/TwoButtonController.cs
+index 1aa3edd..939f447 100644
+--- a/Assets/Scripts/Controllers/TwoButtonController.cs
++++ b/Assets/Scripts/Controllers/TwoButtonController.cs
+@@ -5,38 +5,24 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
++using Utilities;
+ 
++namespace Controllers
++{
+     /// <summary>
+     ///  Provides an implementation of the BaseController that splits the screen into two buttons by width.
+     /// </summary>
+-    public class TwoButtonController : BaseController
++    public sealed class TwoButtonController : BaseController
+     {
+         private GameInput _input;
+ 
+         private static int HalfScreenWidth => Screen.width / 2;
+ 
+-        private void Awake()
+-        {
+-            _input = new GameInput();
+-        }
+-
+-        private void OnEnable()
+-        {
+-            _input.TwoButton.Enable();
+-        }
+-
+-        private void OnDisable()
+-        {
+-            _input.TwoButton.Disable();
+-        }
+-
+-        private void OnDestroy()
+-        {
+-            _input?.Dispose();
+-        }
++        private void Awake() => _input = new GameInput();
++        private void OnEnable() => _input.TwoButton.Enable();
++        private void OnDisable() => _input.TwoButton.Disable();
++        private void OnDestroy() => _input?.Dispose();
+ 
+         private void Update()
+         {
+diff --git a/Assets/Scripts/Data/SessionData.cs b/Assets/Scripts/Data/SessionData.cs
+index 7ec9953..bfd930c 100644
+--- a/Assets/Scripts/Data/SessionData.cs
++++ b/Assets/Scripts/Data/SessionData.cs
+@@ -5,11 +5,11 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
+-    public class SessionData
++namespace Data
++{
++    public sealed class SessionData
+     {
+         public SessionData()
+         {
+@@ -21,10 +21,7 @@ namespace InterstellarDrift
+ 
+         public int MillisecondsSurvived { get; set; }
+ 
+-        public int SecondsSurvived
+-        {
+-            get { return MillisecondsSurvived / 1000; }
+-        }
++        public int SecondsSurvived => MillisecondsSurvived / 1000;
+ 
+         public Texture2D FrontStarsTexture2D { get; set; }
+         public Texture2D BackStarsTexture2D { get; set; }
+diff --git a/Assets/Scripts/Data/TrackedData.cs b/Assets/Scripts/Data/TrackedData.cs
+index 0110add..b93660b 100644
+--- a/Assets/Scripts/Data/TrackedData.cs
++++ b/Assets/Scripts/Data/TrackedData.cs
+@@ -5,23 +5,19 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using CloudOnce;
+-    using UnityEngine;
+-    using UnityEngine.SceneManagement;
++using CloudOnce;
++using UnityEngine;
++using UnityEngine.SceneManagement;
+ 
+-    public class TrackedData : MonoBehaviour
++namespace Data
++{
++    public sealed class TrackedData : MonoBehaviour
+     {
+         private static TrackedData s_instance;
+ 
+         public static TrackedData Instance
+         {
+-            get
+-            {
+-                return s_instance;
+-            }
+-
++            get => s_instance;
+             private set
+             {
+                 if (s_instance != null)
+diff --git a/Assets/Scripts/Enemy/Avoidance.cs b/Assets/Scripts/Enemy/Avoidance.cs
+index ae1a195..c602d55 100644
+--- a/Assets/Scripts/Enemy/Avoidance.cs
++++ b/Assets/Scripts/Enemy/Avoidance.cs
+@@ -5,14 +5,14 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using System;
+-    using UnityEngine;
+-    using UnityEngine.Events;
++using System;
++using UnityEngine;
++using UnityEngine.Events;
+ 
++namespace Enemy
++{
+     [RequireComponent(typeof(Collider2D))]
+-    public class Avoidance : MonoBehaviour
++    public sealed class Avoidance : MonoBehaviour
+     {
+         public Vector2Event OnSafePointCalculated;
+ 
+@@ -38,7 +38,7 @@ namespace InterstellarDrift
+     }
+ 
+     [Serializable]
+-    public class Vector2Event : UnityEvent<Vector2>
++    public sealed class Vector2Event : UnityEvent<Vector2>
+     {
+     }
+ }
+diff --git a/Assets/Scripts/Enemy/EnemyCollision.cs b/Assets/Scripts/Enemy/EnemyCollision.cs
+index 3e0e765..55c6cc2 100644
+--- a/Assets/Scripts/Enemy/EnemyCollision.cs
++++ b/Assets/Scripts/Enemy/EnemyCollision.cs
+@@ -5,11 +5,17 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using Audio;
++using Obstacles;
++using PoolingSystem;
++using Score;
++using UnityEngine;
+ 
+-    public class EnemyCollision : MonoBehaviour
++namespace Enemy
++{
++    [RequireComponent(typeof(Obstacle))]
++    [RequireComponent(typeof(TargetTransform))]
++    public sealed class EnemyCollision : MonoBehaviour
+     {
+         public Sound OnCollision = Sound.Death;
+ 
+@@ -44,13 +50,15 @@ namespace InterstellarDrift
+             }
+ 
+             var explosion = objectPooler.Spawn("Prefabs/", "Explosion", null, transform.position);
+-            var particles = explosion.GetComponent<ParticleSystem>();
+-            if (particles != null)
++            if (explosion.TryGetComponent<ParticleSystem>(out var particles))
+             {
+                 objectPooler.Recycle(explosion, particles.main.duration + 1f);
+             }
+ 
+-            cachedObstacle?.RecycleSelf();
++            if (cachedObstacle != null)
++            {
++                cachedObstacle.RecycleSelf();
++            }
+         }
+     }
+ }
+diff --git a/Assets/Scripts/Enemy/EnemyDriver.cs b/Assets/Scripts/Enemy/EnemyDriver.cs
+index 5ff6784..43a4e2e 100644
+--- a/Assets/Scripts/Enemy/EnemyDriver.cs
++++ b/Assets/Scripts/Enemy/EnemyDriver.cs
+@@ -5,13 +5,13 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using CloudOnce;
+-    using UnityEngine;
++using CloudOnce;
++using UnityEngine;
+ 
++namespace Enemy
++{
+     [RequireComponent(typeof(Vehicle), typeof(TargetTransform))]
+-    public class EnemyDriver : MonoBehaviour
++    public sealed class EnemyDriver : MonoBehaviour
+     {
+         [SerializeField] private bool _isEngineOn;
+         [SerializeField] private float _turnRatio = 2f;
+@@ -26,14 +26,14 @@ namespace InterstellarDrift
+ 
+         public bool IsEngineOn
+         {
+-            get { return _isEngineOn; }
+-            set { _isEngineOn = value; }
++            get => _isEngineOn;
++            set => _isEngineOn = value;
+         }
+ 
+         public float TurnRatio
+         {
+-            get { return _turnRatio; }
+-            set { _turnRatio = value; }
++            get => _turnRatio;
++            set => _turnRatio = value;
+         }
+ 
+         public Vector2 TargetPoint
+@@ -48,10 +48,7 @@ namespace InterstellarDrift
+                 return targetPoint;
+             }
+ 
+-            set
+-            {
+-                targetPoint = value;
+-            }
++            set => targetPoint = value;
+         }
+ 
+         private void Awake()
+diff --git a/Assets/Scripts/Enemy/EnemyShipSetup.cs b/Assets/Scripts/Enemy/EnemyShipSetup.cs
+index b7c5a94..76ddb21 100644
+--- a/Assets/Scripts/Enemy/EnemyShipSetup.cs
++++ b/Assets/Scripts/Enemy/EnemyShipSetup.cs
+@@ -5,11 +5,15 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using PoolingSystem;
++using UnityEngine;
+ 
+-    public class EnemyShipSetup : MonoBehaviour, ISpawnable
++namespace Enemy
++{
++    [RequireComponent(typeof(EnemyDriver))]
++    [RequireComponent(typeof(Rigidbody2D))]
++    [RequireComponent(typeof(TargetTransform))]
++    public sealed class EnemyShipSetup : MonoBehaviour, ISpawnable
+     {
+         public GameObject Scanner;
+         public TargetTransform Target;
+diff --git a/Assets/Scripts/Enemy/EnemyShipSupervisor.cs b/Assets/Scripts/Enemy/EnemyShipSupervisor.cs
+index 6db3166..194abc3 100644
+--- a/Assets/Scripts/Enemy/EnemyShipSupervisor.cs
++++ b/Assets/Scripts/Enemy/EnemyShipSupervisor.cs
+@@ -5,10 +5,13 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using Controllers;
++using Score;
++using Ship;
++using UnityEngine;
+ 
++namespace Enemy
++{
+     public enum Controller
+     {
+         OneClick,
+@@ -18,7 +21,7 @@ namespace InterstellarDrift
+     }
+ 
+     [RequireComponent(typeof(Rigidbody2D))]
+-    public class EnemyShipSupervisor : MonoBehaviour
++    public sealed class EnemyShipSupervisor : MonoBehaviour
+     {
+         [SerializeField] private bool _initializeSelf;
+         [SerializeField] private Controller _desiredController;
+@@ -29,8 +32,8 @@ namespace InterstellarDrift
+ 
+         public Controller DesiredController
+         {
+-            get { return _desiredController; }
+-            set { _desiredController = value; }
++            get => _desiredController;
++            set => _desiredController = value;
+         }
+ 
+         public void Init()
+@@ -57,21 +60,13 @@ namespace InterstellarDrift
+             }
+         }
+ 
+-        private BaseController AddControllerOfType(Controller type)
++        private BaseController AddControllerOfType(Controller type) => type switch
+         {
+-            switch (type)
+-            {
+-                case Controller.OneClick:
+-                    return gameObject.AddComponent<OneClickController>();
+-                case Controller.TwoButton:
+-                    return gameObject.AddComponent<TwoButtonController>();
+-                case Controller.Keyboard:
+-                    return gameObject.AddComponent<KeyboardController>();
+-                case Controller.Enemy:
+-                    return gameObject.AddComponent<EnemyController>();
+-                default:
+-                    return null;
+-            }
+-        }
++            Controller.OneClick => gameObject.AddComponent<OneClickController>(),
++            Controller.TwoButton => gameObject.AddComponent<TwoButtonController>(),
++            Controller.Keyboard => gameObject.AddComponent<KeyboardController>(),
++            Controller.Enemy => gameObject.AddComponent<EnemyController>(),
++            _ => null
++        };
+     }
+ }
+diff --git a/Assets/Scripts/Enemy/HotPursuitCopSpawner.cs b/Assets/Scripts/Enemy/HotPursuitCopSpawner.cs
+index d3ee695..5e38dab 100644
+--- a/Assets/Scripts/Enemy/HotPursuitCopSpawner.cs
++++ b/Assets/Scripts/Enemy/HotPursuitCopSpawner.cs
+@@ -5,11 +5,11 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
+-    public class HotPursuitCopSpawner : MonoBehaviour
++namespace Enemy
++{
++    public sealed class HotPursuitCopSpawner : MonoBehaviour
+     {
+         public GameObject cop;
+         public GameObject[] spawners;
+diff --git a/Assets/Scripts/Enemy/NotifyOnCollide.cs b/Assets/Scripts/Enemy/NotifyOnCollide.cs
+index 8c92df7..a67b9a1 100644
+--- a/Assets/Scripts/Enemy/NotifyOnCollide.cs
++++ b/Assets/Scripts/Enemy/NotifyOnCollide.cs
+@@ -5,17 +5,17 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using System;
+-    using UnityEngine;
+-    using UnityEngine.Events;
++using System;
++using UnityEngine;
++using UnityEngine.Events;
+ 
++namespace Enemy
++{
+     /// <summary>
+     ///  Sends an event out to listeners when collisions with objects on the chosen layers occur.
+     /// </summary>
+     [RequireComponent(typeof(Collider2D))]
+-    public class NotifyOnCollide : MonoBehaviour
++    public sealed class NotifyOnCollide : MonoBehaviour
+     {
+         public UnityEvent OnCollisionEnter;
+         public UnityEvent OnCollisionStay;
+@@ -25,7 +25,7 @@ namespace InterstellarDrift
+ 
+         private void OnCollisionEnter2D(Collision2D other)
+         {
+-            if ((1 << other.gameObject.layer & _collisionLayers) != 0)
++            if (((1 << other.gameObject.layer) & _collisionLayers) != 0)
+             {
+                 OnCollisionEnter.Invoke();
+             }
+@@ -33,7 +33,7 @@ namespace InterstellarDrift
+ 
+         private void OnCollisionStay2D(Collision2D other)
+         {
+-            if ((1 << other.gameObject.layer & _collisionLayers) != 0)
++            if (((1 << other.gameObject.layer) & _collisionLayers) != 0)
+             {
+                 OnCollisionStay.Invoke();
+             }
+@@ -41,7 +41,7 @@ namespace InterstellarDrift
+ 
+         private void OnCollisionExit2D(Collision2D other)
+         {
+-            if ((1 << other.gameObject.layer & _collisionLayers) != 0)
++            if (((1 << other.gameObject.layer) & _collisionLayers) != 0)
+             {
+                 OnCollisionExit.Invoke();
+             }
+@@ -49,7 +49,7 @@ namespace InterstellarDrift
+     }
+ 
+     [Serializable]
+-    public class Collision2DEvent : UnityEvent<Collider2D>
++    public sealed class Collision2DEvent : UnityEvent<Collider2D>
+     {
+     }
+ }
+diff --git a/Assets/Scripts/Enemy/NotifyOnDespawn.cs b/Assets/Scripts/Enemy/NotifyOnDespawn.cs
+index 5077a66..6e66874 100644
+--- a/Assets/Scripts/Enemy/NotifyOnDespawn.cs
++++ b/Assets/Scripts/Enemy/NotifyOnDespawn.cs
+@@ -5,12 +5,13 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
+-    using UnityEngine.Events;
++using PoolingSystem;
++using UnityEngine;
++using UnityEngine.Events;
+ 
+-    public class NotifyOnDespawn : MonoBehaviour, ISpawnable
++namespace Enemy
++{
++    public sealed class NotifyOnDespawn : MonoBehaviour, ISpawnable
+     {
+         public UnityEvent OnDespawn;
+ 
+@@ -18,9 +19,6 @@ namespace InterstellarDrift
+         {
+         }
+ 
+-        void ISpawnable.OnRecycled()
+-        {
+-            OnDespawn.Invoke();
+-        }
++        void ISpawnable.OnRecycled() => OnDespawn.Invoke();
+     }
+ }
+diff --git a/Assets/Scripts/Enemy/NotifyOnSpawn.cs b/Assets/Scripts/Enemy/NotifyOnSpawn.cs
+index b5c702c..c2b890c 100644
+--- a/Assets/Scripts/Enemy/NotifyOnSpawn.cs
++++ b/Assets/Scripts/Enemy/NotifyOnSpawn.cs
+@@ -5,19 +5,17 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
+-    using UnityEngine.Events;
++using PoolingSystem;
++using UnityEngine;
++using UnityEngine.Events;
+ 
+-    public class NotifyOnSpawn : MonoBehaviour, ISpawnable
++namespace Enemy
++{
++    public sealed class NotifyOnSpawn : MonoBehaviour, ISpawnable
+     {
+         public UnityEvent OnSpawn;
+ 
+-        void ISpawnable.OnSpawned(ObjectPooler pooler)
+-        {
+-            OnSpawn.Invoke();
+-        }
++        void ISpawnable.OnSpawned(ObjectPooler pooler) => OnSpawn.Invoke();
+ 
+         void ISpawnable.OnRecycled()
+         {
+diff --git a/Assets/Scripts/Enemy/Scanner2D.cs b/Assets/Scripts/Enemy/Scanner2D.cs
+index 56ed5df..62e68c1 100644
+--- a/Assets/Scripts/Enemy/Scanner2D.cs
++++ b/Assets/Scripts/Enemy/Scanner2D.cs
+@@ -5,18 +5,19 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using System;
+-    using UnityEngine;
+-    using UnityEngine.Events;
++using System;
++using PoolingSystem;
++using UnityEngine;
++using UnityEngine.Events;
+ 
++namespace Enemy
++{
+     /// <summary>
+     ///  Detects gameobjects on the targetMask-layer, and checks if there's a clear view of the target.
+     ///  Notifies listeners of the OnTargetAcquried-event when a target is found, and stops detecting.
+     /// </summary>
+     [RequireComponent(typeof(Collider2D))]
+-    public class Scanner2D : MonoBehaviour, ISpawnable
++    public sealed class Scanner2D : MonoBehaviour, ISpawnable
+     {
+         public TransformEvent OnTargetFound;
+ 
+@@ -25,10 +26,7 @@ namespace InterstellarDrift
+ 
+         private bool foundTarget;
+ 
+-        void ISpawnable.OnSpawned(ObjectPooler pooler)
+-        {
+-            foundTarget = false;
+-        }
++        void ISpawnable.OnSpawned(ObjectPooler pooler) => foundTarget = false;
+ 
+         void ISpawnable.OnRecycled()
+         {
+@@ -48,7 +46,7 @@ namespace InterstellarDrift
+             }
+ 
+             // If gameobject is on targeted layer
+-            if ((1 << col.gameObject.layer & _targetMask) != 0)
++            if (((1 << col.gameObject.layer) & _targetMask) != 0)
+             {
+                 // If no obstacles were hit when trying to "see" the target, we can see it!
+                 if (!Physics2D.Linecast(transform.position, col.transform.position, _obstacleMask).collider)
+@@ -61,7 +59,7 @@ namespace InterstellarDrift
+     }
+ 
+     [Serializable]
+-    public class TransformEvent : UnityEvent<Transform>
++    public sealed class TransformEvent : UnityEvent<Transform>
+     {
+     }
+ }
+diff --git a/Assets/Scripts/Enemy/TargetTransform.cs b/Assets/Scripts/Enemy/TargetTransform.cs
+index f0045fb..815bbd7 100644
+--- a/Assets/Scripts/Enemy/TargetTransform.cs
++++ b/Assets/Scripts/Enemy/TargetTransform.cs
+@@ -5,12 +5,12 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
+-    using UnityEngine.Events;
++using UnityEngine;
++using UnityEngine.Events;
+ 
+-    public class TargetTransform : MonoBehaviour
++namespace Enemy
++{
++    public sealed class TargetTransform : MonoBehaviour
+     {
+         public UnityEvent OnTargetAcquired;
+         public UnityEvent OnTargetLost;
+@@ -19,7 +19,7 @@ namespace InterstellarDrift
+ 
+         public Transform Target
+         {
+-            get { return _target; }
++            get => _target;
+             set
+             {
+                 _target = value;
+diff --git a/Assets/Scripts/Enemy/Vehicle.cs b/Assets/Scripts/Enemy/Vehicle.cs
+index 0ef8f8a..435d20c 100644
+--- a/Assets/Scripts/Enemy/Vehicle.cs
++++ b/Assets/Scripts/Enemy/Vehicle.cs
+@@ -5,12 +5,15 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using Audio;
++using Ship;
++using UnityEngine;
+ 
++namespace Enemy
++{
+     [RequireComponent(typeof(EffectsShepherd))]
+-    public class Vehicle : MonoBehaviour
++    [RequireComponent(typeof(Rigidbody2D))]
++    public sealed class Vehicle : MonoBehaviour
+     {
+         private readonly ForceMode2D forceMode = ForceMode2D.Impulse;
+ 
+@@ -70,7 +73,7 @@ namespace InterstellarDrift
+             }
+ 
+             // Provides motion in the forward direction
+-            cachedRigidbody2D.AddForce(transform.up * forwardForce * Time.fixedDeltaTime, forceMode);
++            cachedRigidbody2D.AddForce(forwardForce * Time.fixedDeltaTime * transform.up, forceMode);
+ 
+             if (Effects)
+             {
+@@ -176,9 +179,6 @@ namespace InterstellarDrift
+             }
+         }
+ 
+-        private void Awake()
+-        {
+-            Init();
+-        }
++        private void Awake() => Init();
+     }
+ }
+diff --git a/Assets/Scripts/GUI/AnimateData.cs b/Assets/Scripts/GUI/AnimateData.cs
+index 9a95d6b..486d0cb 100644
+--- a/Assets/Scripts/GUI/AnimateData.cs
++++ b/Assets/Scripts/GUI/AnimateData.cs
+@@ -5,14 +5,16 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
++using Audio;
++using CloudOnce;
++using Data;
++using DG.Tweening;
++using UnityEngine;
++using UnityEngine.UI;
++
++namespace GUI
+ {
+-    using CloudOnce;
+-    using DG.Tweening;
+-    using UnityEngine;
+-    using UnityEngine.UI;
+-
+-    public class AnimateData : MonoBehaviour
++    public sealed class AnimateData : MonoBehaviour
+     {
+         public StatType Type = StatType.Score;
+ 
+@@ -74,22 +76,19 @@ namespace InterstellarDrift
+             RoundNumber.text = "0";
+ 
+             // Invoke animation
+-            Invoke("AnimateValues", 1f);
++            Invoke(nameof(AnimateValues), 1f);
+         }
+ 
+-        private void AnimateValues()
+-        {
+-            AnimateText(RoundNumber, 0, sessionResult, _animationDuration);
+-        }
++        private void AnimateValues() => AnimateText(RoundNumber, 0, sessionResult, _animationDuration);
+ 
+         private void AnimateText(Text textToAnimate, int from, int to, float duration)
+         {
+             var displayedScore = from;
+-            var sequence = DOTween.Sequence();
++            var sequence = DOTween.Sequence().SetLink(textToAnimate.gameObject, LinkBehaviour.KillOnDestroy);
+ 
+             sequence.Append(DOTween.To(() => displayedScore, x => displayedScore = x, to, duration).OnUpdate(() =>
+             {
+-                textToAnimate.text = string.Empty + displayedScore;
++                textToAnimate.text = displayedScore.ToString();
+                 if (displayedScore >= personalBest && !hasPassedPersonalBest)
+                 {
+                     hasPassedPersonalBest = true;
+diff --git a/Assets/Scripts/GUI/DistanceToText.cs b/Assets/Scripts/GUI/DistanceToText.cs
+index 1d53f75..baf4f92 100644
+--- a/Assets/Scripts/GUI/DistanceToText.cs
++++ b/Assets/Scripts/GUI/DistanceToText.cs
+@@ -5,16 +5,16 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
+-    using UnityEngine.UI;
++using UnityEngine;
++using UnityEngine.UI;
+ 
++namespace GUI
++{
+     /// <summary>
+     ///  Gets the world-coordinate distance between two transforms and outputs it to the Text-component.
+     /// </summary>
+     [RequireComponent(typeof(Text))]
+-    public class DistanceToText : MonoBehaviour
++    public sealed class DistanceToText : MonoBehaviour
+     {
+         public Transform TargetA;
+         public Transform TargetB;
+@@ -28,10 +28,7 @@ namespace InterstellarDrift
+             TargetB = targetB;
+         }
+ 
+-        private void Awake()
+-        {
+-            Init(null, null);
+-        }
++        private void Awake() => Init(null, null);
+ 
+         private void Update()
+         {
+@@ -43,7 +40,7 @@ namespace InterstellarDrift
+                 return;
+             }
+ 
+-            cachedText.text = string.Empty + (int)Vector3.Distance(TargetA.position, TargetB.position);
++            cachedText.text = ((int)Vector3.Distance(TargetA.position, TargetB.position)).ToString();
+         }
+     }
+ }
+diff --git a/Assets/Scripts/GUI/GUIElementFollowTarget.cs b/Assets/Scripts/GUI/GUIElementFollowTarget.cs
+index f6beacc..b4bf6bf 100644
+--- a/Assets/Scripts/GUI/GUIElementFollowTarget.cs
++++ b/Assets/Scripts/GUI/GUIElementFollowTarget.cs
+@@ -5,15 +5,15 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
++namespace GUI
++{
+     /// <summary>
+     /// Makes a Canvas-element move towards a target point in the world.
+     /// Options to make the element linger at the target or be destroyed; be clamped at screen-edges.
+     /// </summary>
+-    public class GUIElementFollowTarget : MonoBehaviour
++    public sealed class GUIElementFollowTarget : MonoBehaviour
+     {
+         public Transform TargetTransform;
+ 
+@@ -30,13 +30,13 @@ namespace InterstellarDrift
+ 
+         public bool DeactivateAtTarget
+         {
+-            get { return _deactivateAtTarget; }
+-            set { _deactivateAtTarget = value; }
++            get => _deactivateAtTarget;
++            set => _deactivateAtTarget = value;
+         }
+ 
+         public bool CurrentlyActive
+         {
+-            get { return currentlyActive; }
++            get => currentlyActive;
+             set
+             {
+                 currentlyActive = value;
+@@ -50,8 +50,8 @@ namespace InterstellarDrift
+ 
+         public bool ClampAtScreenEdge
+         {
+-            get { return _clampAtScreenEdge; }
+-            set { _clampAtScreenEdge = value; }
++            get => _clampAtScreenEdge;
++            set => _clampAtScreenEdge = value;
+         }
+ 
+         public void Init(Transform target, bool clampAtScreenEdge, bool deactivateAtTarget)
+@@ -63,10 +63,7 @@ namespace InterstellarDrift
+             cachedCanvas = GetComponentInParent<Canvas>();
+         }
+ 
+-        private void Awake()
+-        {
+-            Init(TargetTransform, ClampAtScreenEdge, DeactivateAtTarget);
+-        }
++        private void Awake() => Init(TargetTransform, ClampAtScreenEdge, DeactivateAtTarget);
+ 
+         private void Update()
+         {
+diff --git a/Assets/Scripts/GUI/LoadingText.cs b/Assets/Scripts/GUI/LoadingText.cs
+index 23bdc98..91c8cc3 100644
+--- a/Assets/Scripts/GUI/LoadingText.cs
++++ b/Assets/Scripts/GUI/LoadingText.cs
+@@ -5,16 +5,16 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
+-    using UnityEngine.UI;
++using UnityEngine;
++using UnityEngine.UI;
+ 
++namespace GUI
++{
+     /// <summary>
+     ///  Animates a 'Loading...' sentence in a text-box.
+     /// </summary>
+     [RequireComponent(typeof(Text))]
+-    public class LoadingText : MonoBehaviour
++    public sealed class LoadingText : MonoBehaviour
+     {
+         public bool UpperCase;
+ 
+diff --git a/Assets/Scripts/GUI/LookAtTarget2D.cs b/Assets/Scripts/GUI/LookAtTarget2D.cs
+index 1c487bf..03a4324 100644
+--- a/Assets/Scripts/GUI/LookAtTarget2D.cs
++++ b/Assets/Scripts/GUI/LookAtTarget2D.cs
+@@ -5,18 +5,15 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
+-    public class LookAtTarget2D : MonoBehaviour
++namespace GUI
++{
++    public sealed class LookAtTarget2D : MonoBehaviour
+     {
+         public Transform TargetTransform;
+ 
+-        public void Init(Transform targetTransform)
+-        {
+-            TargetTransform = targetTransform;
+-        }
++        public void Init(Transform targetTransform) => TargetTransform = targetTransform;
+ 
+         private static float Angle(Vector2 vector2)
+         {
+diff --git a/Assets/Scripts/GUI/PointerFactory.cs b/Assets/Scripts/GUI/PointerFactory.cs
+index f3e4d99..d0906b1 100644
+--- a/Assets/Scripts/GUI/PointerFactory.cs
++++ b/Assets/Scripts/GUI/PointerFactory.cs
+@@ -5,14 +5,14 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
++namespace GUI
++{
+     /// <summary>
+     ///  Instantiates and defines methods for ease of setting up targets for the UI-pointers.
+     /// </summary>
+-    public class PointerFactory : MonoBehaviour
++    public sealed class PointerFactory : MonoBehaviour
+     {
+         private GameObject prefabPointer;
+         private bool isInitialized;
+@@ -31,8 +31,7 @@ namespace InterstellarDrift
+         public void CreateNewPointer(Transform mainTarget, Transform secondaryTarget, bool clampToScreen, bool deactivateAtTarget)
+         {
+             // 1. Instantiate new pointer from prefab
+-            var pointerGo = Instantiate(prefabPointer);
+-            pointerGo.transform.SetParent(transform, false);
++            var pointerGo = Instantiate(prefabPointer, transform, false);
+ 
+             // 2. Get follow-script and set target and initialize
+             var followScript = pointerGo.GetComponent<GUIElementFollowTarget>();
+diff --git a/Assets/Scripts/GUI/TutorialActivator.cs b/Assets/Scripts/GUI/TutorialActivator.cs
+index 151b586..04801c6 100644
+--- a/Assets/Scripts/GUI/TutorialActivator.cs
++++ b/Assets/Scripts/GUI/TutorialActivator.cs
+@@ -5,23 +5,16 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using CloudOnce;
+-    using UnityEngine;
++using CloudOnce;
++using UnityEngine;
+ 
+-    public class TutorialActivator : MonoBehaviour
++namespace GUI
++{
++    public sealed class TutorialActivator : MonoBehaviour
+     {
+         private GameObject tutorialCanvas;
+ 
+-        private void Awake()
+-        {
+-            tutorialCanvas = GameObject.FindWithTag("TutorialCanvas");
+-        }
+-
+-        private void Start()
+-        {
+-            tutorialCanvas.SetActive(!CloudVariables.HasFinishedTutorial);
+-        }
++        private void Awake() => tutorialCanvas = GameObject.FindWithTag("TutorialCanvas");
++        private void Start() => tutorialCanvas.SetActive(!CloudVariables.HasFinishedTutorial);
+     }
+ }
+diff --git a/Assets/Scripts/GUI/TutorialManager.cs b/Assets/Scripts/GUI/TutorialManager.cs
+index 161cb18..e4ccf69 100644
+--- a/Assets/Scripts/GUI/TutorialManager.cs
++++ b/Assets/Scripts/GUI/TutorialManager.cs
+@@ -5,13 +5,17 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
++using CloudOnce;
++using Controllers;
++using Data;
++using Ship;
++using UnityEngine;
++using UnityEngine.UI;
++using Utilities;
++
++namespace GUI
+ {
+-    using CloudOnce;
+-    using UnityEngine;
+-    using UnityEngine.UI;
+-
+-    public class TutorialManager : MonoBehaviour
++    public sealed class TutorialManager : MonoBehaviour
+     {
+         [SerializeField] private Text _left;
+         [SerializeField] private Text _right;
+@@ -28,25 +32,10 @@ namespace InterstellarDrift
+ 
+         private static int HalfScreenWidth => Screen.width / 2;
+ 
+-        private void Awake()
+-        {
+-            _input = new GameInput();
+-        }
+-
+-        private void OnEnable()
+-        {
+-            _input.Keyboard.Enable();
+-        }
+-
+-        private void OnDisable()
+-        {
+-            _input.Keyboard.Disable();
+-        }
+-
+-        private void OnDestroy()
+-        {
+-            _input?.Dispose();
+-        }
++        private void Awake() => _input = new GameInput();
++        private void OnEnable() => _input.Keyboard.Enable();
++        private void OnDisable() => _input.Keyboard.Disable();
++        private void OnDestroy() => _input?.Dispose();
+ 
+         private void Start()
+         {
+diff --git a/Assets/Scripts/GameMode/EnabledOnGameModes.cs b/Assets/Scripts/GameMode/EnabledOnGameModes.cs
+index c3f59a2..5bf27eb 100644
+--- a/Assets/Scripts/GameMode/EnabledOnGameModes.cs
++++ b/Assets/Scripts/GameMode/EnabledOnGameModes.cs
+@@ -5,14 +5,13 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
+-    using Mode = GameMode.Mode;
++using UnityEngine;
+ 
+-    public class EnabledOnGameModes : MonoBehaviour
++namespace GameMode
++{
++    public sealed class EnabledOnGameModes : MonoBehaviour
+     {
+-        public Mode[] Modes = { Mode.Standard };
++        public GameMode.Mode[] Modes = { GameMode.Mode.Standard };
+ 
+         private void Awake()
+         {
+diff --git a/Assets/Scripts/GameMode/GameMode.cs b/Assets/Scripts/GameMode/GameMode.cs
+index aeeb572..c10e496 100644
+--- a/Assets/Scripts/GameMode/GameMode.cs
++++ b/Assets/Scripts/GameMode/GameMode.cs
+@@ -5,11 +5,11 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
+-    public class GameMode : MonoBehaviour
++namespace GameMode
++{
++    public sealed class GameMode : MonoBehaviour
+     {
+         private static GameMode s_instance;
+ 
+@@ -23,10 +23,7 @@ namespace InterstellarDrift
+ 
+         public static GameMode Instance
+         {
+-            get
+-            {
+-                return s_instance;
+-            }
++            get => s_instance;
+             set
+             {
+                 if (s_instance != null)
+@@ -40,8 +37,8 @@ namespace InterstellarDrift
+ 
+         public Mode CurrentMode
+         {
+-            get { return _currentMode; }
+-            set { _currentMode = value; }
++            get => _currentMode;
++            set => _currentMode = value;
+         }
+ 
+         private void Awake()
+diff --git a/Assets/Scripts/GameMode/GameModeSetter.cs b/Assets/Scripts/GameMode/GameModeSetter.cs
+index 68e9136..a75100e 100644
+--- a/Assets/Scripts/GameMode/GameModeSetter.cs
++++ b/Assets/Scripts/GameMode/GameModeSetter.cs
+@@ -5,18 +5,14 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
+-    using Mode = GameMode.Mode;
++using UnityEngine;
+ 
+-    public class GameModeSetter : MonoBehaviour
++namespace GameMode
++{
++    public sealed class GameModeSetter : MonoBehaviour
+     {
+-        public Mode TargetMode = Mode.Standard;
++        public GameMode.Mode TargetMode = GameMode.Mode.Standard;
+ 
+-        public void SetMode()
+-        {
+-            GameMode.Instance.CurrentMode = TargetMode;
+-        }
++        public void SetMode() => GameMode.Instance.CurrentMode = TargetMode;
+     }
+ }
+diff --git a/Assets/Scripts/GameMode/TimedMode.cs b/Assets/Scripts/GameMode/TimedMode.cs
+index 383328c..530c47f 100644
+--- a/Assets/Scripts/GameMode/TimedMode.cs
++++ b/Assets/Scripts/GameMode/TimedMode.cs
+@@ -5,12 +5,13 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
+-    using UnityEngine.UI;
++using Data;
++using UnityEngine;
++using UnityEngine.UI;
+ 
+-    public class TimedMode : MonoBehaviour
++namespace GameMode
++{
++    public sealed class TimedMode : MonoBehaviour
+     {
+         public Image FillableImage;
+         public float CurrentTime;
+@@ -26,10 +27,7 @@ namespace InterstellarDrift
+             TotalSecondsAlive = 0;
+         }
+ 
+-        public void RefreshDuration()
+-        {
+-            CurrentTime = TimeLimit;
+-        }
++        public void RefreshDuration() => CurrentTime = TimeLimit;
+ 
+         private void Start()
+         {
+diff --git a/Assets/Scripts/Goals/Goal.cs b/Assets/Scripts/Goals/Goal.cs
+index 6da260c..c2932bd 100644
+--- a/Assets/Scripts/Goals/Goal.cs
++++ b/Assets/Scripts/Goals/Goal.cs
+@@ -5,14 +5,16 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using Audio;
++using Score;
++using UnityEngine;
+ 
++namespace Goals
++{
+     /// <summary>
+     ///  Handles trigger-detection.
+     /// </summary>
+-    public class Goal : MonoBehaviour
++    public sealed class Goal : MonoBehaviour
+     {
+         [SerializeField] private Sound _triggerSound = Sound.Checkpoint;
+ 
+diff --git a/Assets/Scripts/Goals/GoalHerder.cs b/Assets/Scripts/Goals/GoalHerder.cs
+index 845cb52..0e367e5 100644
+--- a/Assets/Scripts/Goals/GoalHerder.cs
++++ b/Assets/Scripts/Goals/GoalHerder.cs
+@@ -5,15 +5,17 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using System.Collections.Generic;
+-    using UnityEngine;
++using System.Collections.Generic;
++using GameMode;
++using GUI;
++using UnityEngine;
+ 
++namespace Goals
++{
+     /// <summary>
+     ///  Spawns the goal the player must reach before his time runs out.
+     /// </summary>
+-    public class GoalHerder : MonoBehaviour
++    public sealed class GoalHerder : MonoBehaviour
+     {
+         private const float multiplierIncreaseRate = 0.1f;
+         private const float maxMultiplier = 2f;
+@@ -39,7 +41,7 @@ namespace InterstellarDrift
+                 Debug.LogWarning("GoalHerder is lacking a reference to the ship's location.");
+ #endif
+                 var player = GameObject.FindWithTag("Player");
+-                targetTransform = player?.transform ?? transform;
++                targetTransform = player != null ? player.transform : transform;
+             }
+ 
+             if (GameObject.FindWithTag("PointerCanvas"))
+@@ -98,7 +100,7 @@ namespace InterstellarDrift
+             }
+ 
+             // Instantiate new goal and child it to the herder-object
+-            var goal = Instantiate(goalPrefab, position, Quaternion.identity) as GameObject;
++            var goal = Instantiate(goalPrefab, position, Quaternion.identity);
+             goal.transform.parent = transform;
+ 
+             // Attach listener to removal event
+@@ -112,7 +114,7 @@ namespace InterstellarDrift
+ 
+         private void RemoveGoal(GameObject goal, GameObject triggeringObject)
+         {
+-            if (_timerDisplay && GameMode.Instance.CurrentMode == GameMode.Mode.Time)
++            if (_timerDisplay && GameMode.GameMode.Instance.CurrentMode is GameMode.GameMode.Mode.Time)
+             {
+                 _timerDisplay.RefreshDuration();
+             }
+diff --git a/Assets/Scripts/Obstacles/Obstacle.cs b/Assets/Scripts/Obstacles/Obstacle.cs
+index fde3541..26a9cdf 100644
+--- a/Assets/Scripts/Obstacles/Obstacle.cs
++++ b/Assets/Scripts/Obstacles/Obstacle.cs
+@@ -5,17 +5,20 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using System.Collections;
+-    using UnityEngine;
++using System.Collections;
++using PoolingSystem;
++using UnityEngine;
+ 
++namespace Obstacles
++{
+     /// <summary>
+     ///  A self-recycling obstacle.
+     ///  Uses an IEnumerator to indefinitely check if it is within its allowed bounds. If false, calls for any listeners to recycle.
+     /// </summary>
+-    public class Obstacle : MonoBehaviour, ISpawnable
++    public sealed class Obstacle : MonoBehaviour, ISpawnable
+     {
++        private static readonly WaitForSeconds s_waitForSeconds1 = new(1f);
++
+         [SerializeField] private Collider2D _obstacleCollider2D;
+         [SerializeField] private float _approximateRadius = 5f;
+ 
+@@ -29,10 +32,7 @@ namespace InterstellarDrift
+         public Collider2D ObstacleCollider2D => _obstacleCollider2D;
+         public float ApproximateRadius => _approximateRadius;
+ 
+-        public void SetAllowedArea(Collider2D area)
+-        {
+-            allowedArea = area;
+-        }
++        public void SetAllowedArea(Collider2D area) => allowedArea = area;
+ 
+         public void RecycleSelf()
+         {
+@@ -48,10 +48,7 @@ namespace InterstellarDrift
+             objectPooler.Recycle(gameObject);
+         }
+ 
+-        void ISpawnable.OnSpawned(ObjectPooler pooler)
+-        {
+-            objectPooler = pooler;
+-        }
++        void ISpawnable.OnSpawned(ObjectPooler pooler) => objectPooler = pooler;
+ 
+         void ISpawnable.OnRecycled()
+         {
+@@ -104,7 +101,7 @@ namespace InterstellarDrift
+                     RecycleSelf();
+                 }
+ 
+-                yield return new WaitForSeconds(1f);
++                yield return s_waitForSeconds1;
+             }
+         }
+     }
+diff --git a/Assets/Scripts/Obstacles/ObstacleHerder.cs b/Assets/Scripts/Obstacles/ObstacleHerder.cs
+index 394d399..a2bfc0f 100644
+--- a/Assets/Scripts/Obstacles/ObstacleHerder.cs
++++ b/Assets/Scripts/Obstacles/ObstacleHerder.cs
+@@ -5,12 +5,13 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using PoolingSystem;
++using UnityEngine;
+ 
++namespace Obstacles
++{
+     [RequireComponent(typeof(PlayArea))]
+-    public class ObstacleHerder : MonoBehaviour
++    public sealed class ObstacleHerder : MonoBehaviour
+     {
+         [SerializeField] private GameObject[] obstaclePrefabs;
+ 
+@@ -24,10 +25,7 @@ namespace InterstellarDrift
+             objectPooler = GameObject.FindWithTag("ObjectPooler").GetComponent<ObjectPooler>();
+         }
+ 
+-        private void OnDestroy()
+-        {
+-            playArea.OnSpawnPossible -= SpawnObstacle;
+-        }
++        private void OnDestroy() => playArea.OnSpawnPossible -= SpawnObstacle;
+ 
+         private void SpawnObstacle()
+         {
+@@ -36,8 +34,7 @@ namespace InterstellarDrift
+             // fake radius for all collider2D
+             var radius = obstaclePrefab.GetComponent<Obstacle>().ApproximateRadius;
+ 
+-            Vector2 spawnLocation;
+-            if (!playArea.GetSpawnLocation(radius, out spawnLocation))
++            if (!playArea.GetSpawnLocation(radius, out var spawnLocation))
+             {
+                 return;
+             }
+diff --git a/Assets/Scripts/Obstacles/PlayArea.cs b/Assets/Scripts/Obstacles/PlayArea.cs
+index 94ad6b3..3e9b57c 100644
+--- a/Assets/Scripts/Obstacles/PlayArea.cs
++++ b/Assets/Scripts/Obstacles/PlayArea.cs
+@@ -5,17 +5,18 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
++using System;
++using UnityEngine;
++
++namespace Obstacles
+ {
+-    using System;
+-    using UnityEngine;
+     using Random = UnityEngine.Random;
+ 
+     /// <summary>
+     ///  Defines an area around the player that is used for gameplay.
+     ///  Contains some specialized helper-functions for other classes.
+     /// </summary>
+-    public class PlayArea : MonoBehaviour
++    public sealed class PlayArea : MonoBehaviour
+     {
+         private const float spawnAreaOffset = 160f;
+         private const float spawnAreaRadius = 60f;
+@@ -43,7 +44,7 @@ namespace InterstellarDrift
+             if (targetTransform == null)
+             {
+                 var player = GameObject.FindWithTag("Player");
+-                targetTransform = player?.transform ?? transform;
++                targetTransform = player != null ? player.transform : transform;
+ #if DEBUG
+                 Debug.LogWarning("PlayArea origin-point not set. Using default transform '" + targetTransform.name + "'.");
+ #endif
+@@ -127,9 +128,7 @@ namespace InterstellarDrift
+ #endif
+ 
+         private Vector2 GetRandomPointInSpawnCircle()
+-        {
+-            return SpawnArea.offset + (Vector2)SpawnArea.transform.position + (Random.insideUnitCircle * SpawnArea.radius);
+-        }
++            => SpawnArea.offset + (Vector2)SpawnArea.transform.position + (Random.insideUnitCircle * SpawnArea.radius);
+ 
+         private int CountObstaclesInSpawnArea()
+         {
+diff --git a/Assets/Scripts/PoolingSystem/ISpawnable.cs b/Assets/Scripts/PoolingSystem/ISpawnable.cs
+index 2ec9a2a..57bca84 100644
+--- a/Assets/Scripts/PoolingSystem/ISpawnable.cs
++++ b/Assets/Scripts/PoolingSystem/ISpawnable.cs
+@@ -5,7 +5,7 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
++namespace PoolingSystem
+ {
+     public interface ISpawnable
+     {
+diff --git a/Assets/Scripts/PoolingSystem/ObjectPooler.cs b/Assets/Scripts/PoolingSystem/ObjectPooler.cs
+index 5b27498..98307fd 100644
+--- a/Assets/Scripts/PoolingSystem/ObjectPooler.cs
++++ b/Assets/Scripts/PoolingSystem/ObjectPooler.cs
+@@ -3,13 +3,13 @@
+ // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ // </copyright>
+ 
+-namespace InterstellarDrift
+-{
+-    using System.Collections.Generic;
+-    using DG.Tweening;
+-    using UnityEngine;
++using System.Collections.Generic;
++using DG.Tweening;
++using UnityEngine;
+ 
+-    public class ObjectPooler : MonoBehaviour
++namespace PoolingSystem
++{
++    public sealed class ObjectPooler : MonoBehaviour
+     {
+         private Transform objectPoolTransform;
+ 
+@@ -23,9 +23,7 @@ namespace InterstellarDrift
+         /// <param name="worldPosition">Where in world space the object will be spawned</param>
+         /// <returns>The spawned <see cref="GameObject"/></returns>
+         public GameObject Spawn(string prefabPath, string prefabName, Transform parent, Vector3 worldPosition)
+-        {
+-            return Spawn(prefabPath, prefabName, parent, worldPosition, Quaternion.identity);
+-        }
++            => Spawn(prefabPath, prefabName, parent, worldPosition, Quaternion.identity);
+ 
+         /// <summary>
+         /// Spawn an object from a prefab, the ObjectPooler will either instantiate a new object or reuse an old one
+@@ -68,9 +66,7 @@ namespace InterstellarDrift
+         /// <param name="worldPosition">Where in world space the object will be spawned</param>
+         /// <returns>The spawned <see cref="GameObject"/></returns>
+         public GameObject Spawn(GameObject prefab, Transform parent, Vector3 worldPosition)
+-        {
+-            return Spawn(prefab, parent, worldPosition, Quaternion.identity);
+-        }
++            => Spawn(prefab, parent, worldPosition, Quaternion.identity);
+ 
+         /// <summary>
+         /// Spawn an object from a prefab, the ObjectPooler will either instantiate a new object or reuse an old one
+@@ -174,21 +170,17 @@ namespace InterstellarDrift
+ 
+             g.SetActive(false);
+ 
+-            if (gameObjectTypePool != null)
+-            {
+-                t.SetParent(gameObjectTypePool);
+-                t.localPosition = Vector3.zero;
+-            }
+-            else
++            if (gameObjectTypePool == null)
+             {
+                 var newGameObject = new GameObject { name = g.name + "s" };
+                 newGameObject.transform.SetParent(objectPoolTransform);
+                 newGameObject.transform.localPosition = Vector3.zero;
+ 
+                 gameObjectTypePool = newGameObject.transform;
+-                t.SetParent(gameObjectTypePool);
+-                t.localPosition = Vector3.zero;
+             }
++
++            t.SetParent(gameObjectTypePool);
++            t.localPosition = Vector3.zero;
+         }
+ 
+         private GameObject InitializeObject(GameObject go, Transform parent)
+@@ -216,7 +208,7 @@ namespace InterstellarDrift
+                 spawnable.OnSpawned(this);
+             }
+ 
+-            go.transform.SetParent(parent ?? transform);
++            go.transform.SetParent(parent != null ? parent : transform);
+ 
+             go.SetActive(true);
+             return go;
+diff --git a/Assets/Scripts/PoolingSystem/PooledParticle.cs b/Assets/Scripts/PoolingSystem/PooledParticle.cs
+index b7bbcf8..df4f6e8 100644
+--- a/Assets/Scripts/PoolingSystem/PooledParticle.cs
++++ b/Assets/Scripts/PoolingSystem/PooledParticle.cs
+@@ -3,11 +3,12 @@
+ // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ // </copyright>
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
+-    public class PooledParticle : MonoBehaviour, ISpawnable
++namespace PoolingSystem
++{
++    [RequireComponent(typeof(ParticleSystem))]
++    public sealed class PooledParticle : MonoBehaviour, ISpawnable
+     {
+         [SerializeField] private float _activationDelayOnSpawned = 0.15f;
+ 
+@@ -24,7 +25,7 @@ namespace InterstellarDrift
+                 return;
+             }
+ 
+-            Invoke("ActivateParticles", _activationDelayOnSpawned);
++            Invoke(nameof(ActivateParticles), _activationDelayOnSpawned);
+         }
+ 
+         void ISpawnable.OnRecycled()
+@@ -41,14 +42,8 @@ namespace InterstellarDrift
+             cachedParticleSystem.Stop();
+         }
+ 
+-        private void Awake()
+-        {
+-            cachedParticleSystem = GetComponent<ParticleSystem>();
+-        }
++        private void Awake() => cachedParticleSystem = GetComponent<ParticleSystem>();
+ 
+-        private void ActivateParticles()
+-        {
+-            cachedParticleSystem.Play();
+-        }
++        private void ActivateParticles() => cachedParticleSystem.Play();
+     }
+ }
+diff --git a/Assets/Scripts/PoolingSystem/PoolingEventHook.cs b/Assets/Scripts/PoolingSystem/PoolingEventHook.cs
+index 2c1e516..1fc32b5 100644
+--- a/Assets/Scripts/PoolingSystem/PoolingEventHook.cs
++++ b/Assets/Scripts/PoolingSystem/PoolingEventHook.cs
+@@ -3,11 +3,11 @@
+ // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ // </copyright>
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
+-    public class PoolingEventHook : MonoBehaviour
++namespace PoolingSystem
++{
++    public sealed class PoolingEventHook : MonoBehaviour
+     {
+         [SerializeField] private GameObject prefab;
+ 
+@@ -25,8 +25,7 @@ namespace InterstellarDrift
+             }
+ 
+             var o = objectPooler.Spawn(prefab, null, transform.position, transform.localRotation);
+-            var particles = o.GetComponent<ParticleSystem>();
+-            if (particles != null)
++            if (o.TryGetComponent<ParticleSystem>(out var particles))
+             {
+                 objectPooler.Recycle(o, particles.main.duration + 1f);
+             }
+@@ -35,12 +34,14 @@ namespace InterstellarDrift
+         private static ObjectPooler GetObjectPooler()
+         {
+             var poolerGameObject = GameObject.FindWithTag("ObjectPooler");
+-            return poolerGameObject?.GetComponent<ObjectPooler>();
+-        }
++            if (poolerGameObject != null && poolerGameObject.TryGetComponent<ObjectPooler>(out var pooler))
++            {
++                return pooler;
++            }
+ 
+-        private void Awake()
+-        {
+-            objectPooler = GetObjectPooler();
++            return null;
+         }
++
++        private void Awake() => objectPooler = GetObjectPooler();
+     }
+ }
+diff --git a/Assets/Scripts/Score/AddToScoreOnDestroy.cs b/Assets/Scripts/Score/AddToScoreOnDestroy.cs
+index f4ef2f9..d361a83 100644
+--- a/Assets/Scripts/Score/AddToScoreOnDestroy.cs
++++ b/Assets/Scripts/Score/AddToScoreOnDestroy.cs
+@@ -3,14 +3,14 @@
+ // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ // </copyright>
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
++namespace Score
++{
+     /// <summary>
+     ///  Provides a simple way to increase the score of the player when an object is destroyed or despawned.
+     /// </summary>
+-    public class AddToScoreOnDestroy : MonoBehaviour
++    public sealed class AddToScoreOnDestroy : MonoBehaviour
+     {
+         [SerializeField] private int _addAmount = 100;
+         [SerializeField] private bool _playSound;
+@@ -18,15 +18,9 @@ namespace InterstellarDrift
+         /// <summary>
+         /// For objects that are despawned instead of destroyed.
+         /// </summary>
+-        public void OnDespawned()
+-        {
+-            Increase();
+-        }
++        public void OnDespawned() => Increase();
+ 
+-        private void OnDestroy()
+-        {
+-            Increase();
+-        }
++        private void OnDestroy() => Increase();
+ 
+         private void Increase()
+         {
+diff --git a/Assets/Scripts/Score/DetectionRadius.cs b/Assets/Scripts/Score/DetectionRadius.cs
+index 226ab92..6f700d4 100644
+--- a/Assets/Scripts/Score/DetectionRadius.cs
++++ b/Assets/Scripts/Score/DetectionRadius.cs
+@@ -3,13 +3,13 @@
+ // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ // </copyright>
+ 
+-namespace InterstellarDrift
+-{
+-    using System.Collections.Generic;
+-    using CloudOnce;
+-    using UnityEngine;
++using System.Collections.Generic;
++using CloudOnce;
++using UnityEngine;
+ 
+-    public class DetectionRadius : MonoBehaviour
++namespace Score
++{
++    public sealed class DetectionRadius : MonoBehaviour
+     {
+         [SerializeField] private float _scoreThreshold = 1f;
+         [SerializeField] private float _detectionRadius = 7.5f;
+@@ -23,8 +23,8 @@ namespace InterstellarDrift
+ 
+         public LayerMask DetectionLayer
+         {
+-            get { return _detectionLayer; }
+-            set { _detectionLayer = value; }
++            get => _detectionLayer;
++            set => _detectionLayer = value;
+         }
+ 
+         public void Init(int detectionLayer)
+@@ -42,23 +42,19 @@ namespace InterstellarDrift
+ 
+         private void Update()
+         {
+-            if (!isInitialized)
++            if (isInitialized)
+             {
+-                return;
++                CheckDetectedAndAttemptToScore(GetGameObjectsWithinDetectionRadius(_detectionRadius, DetectionLayer));
+             }
+-
+-            CheckDetectedAndAttemptToScore(GetGameObjectsWithinDetectionRadius(_detectionRadius, DetectionLayer));
+         }
+ 
+ #if DEBUG
+         private void OnDrawGizmos()
+         {
+-            if (!isInitialized)
++            if (isInitialized)
+             {
+-                return;
++                Gizmos.DrawWireSphere(transform.position, _detectionRadius);
+             }
+-
+-            Gizmos.DrawWireSphere(transform.position, _detectionRadius);
+         }
+ #endif
+ 
+@@ -70,12 +66,10 @@ namespace InterstellarDrift
+             // Clean list of previously detected of keys that are no longer present, increment time detected of still present keys
+             foreach (var previousPair in previouslyDetected)
+             {
+-                if (currentDetected.Contains(previousPair.Key))
++                if (!currentDetected.Contains(previousPair.Key))
+                 {
+-                    continue;
++                    removables.Add(previousPair.Key);
+                 }
+-
+-                removables.Add(previousPair.Key);
+             }
+ 
+             // Actual cleaning outside of loop
+@@ -95,12 +89,7 @@ namespace InterstellarDrift
+             // Add new, unregistered detected gameobjects to list of previously detected
+             foreach (var current in currentDetected)
+             {
+-                if (previouslyDetected.ContainsKey(current))
+-                {
+-                    continue;
+-                }
+-
+-                previouslyDetected.Add(current, 0f);
++                previouslyDetected.TryAdd(current, 0f);
+             }
+ 
+             // Holds the keys for the values that have exceeded the scorethreshold and must be reset
+diff --git a/Assets/Scripts/Score/GameEndSupervisor.cs b/Assets/Scripts/Score/GameEndSupervisor.cs
+index 0fc52b7..dafec1b 100644
+--- a/Assets/Scripts/Score/GameEndSupervisor.cs
++++ b/Assets/Scripts/Score/GameEndSupervisor.cs
+@@ -5,11 +5,14 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using Data;
++using GUI;
++using UnityEngine;
+ 
+-    public class GameEndSupervisor : MonoBehaviour
++namespace Score
++{
++    [RequireComponent(typeof(Canvas))]
++    public sealed class GameEndSupervisor : MonoBehaviour
+     {
+         public AnimateData ScoreAnimateData;
+         public AnimateData TimeAnimateData;
+@@ -27,10 +30,7 @@ namespace InterstellarDrift
+             isInitialized = true;
+         }
+ 
+-        private void Start()
+-        {
+-            Init();
+-        }
++        private void Start() => Init();
+ 
+         private void OnEnable()
+         {
+@@ -39,26 +39,27 @@ namespace InterstellarDrift
+                 return;
+             }
+ 
++            var selfCanvas = GetComponent<Canvas>();
++
+             // Deactivate all other Canvases
+             foreach (var canvas in FindObjectsByType<Canvas>())
+             {
+-                if (canvas == GetComponent<Canvas>())
++                if (canvas != selfCanvas)
+                 {
+-                    continue;
++                    canvas.gameObject.SetActive(false);
+                 }
+-
+-                canvas.gameObject.SetActive(false);
+             }
+ 
+-            if (GameMode.Instance.CurrentMode == GameMode.Mode.Standard)
+-            {
+-                ScoreAnimateData.PlayAnimation();
+-                TimeAnimateData.gameObject.SetActive(false);
+-            }
+-            else if (GameMode.Instance.CurrentMode == GameMode.Mode.Time)
++            switch (GameMode.GameMode.Instance.CurrentMode)
+             {
+-                ScoreAnimateData.PlayAnimation();
+-                TimeAnimateData.PlayAnimation();
++                case GameMode.GameMode.Mode.Standard:
++                    ScoreAnimateData.PlayAnimation();
++                    TimeAnimateData.gameObject.SetActive(false);
++                    break;
++                case GameMode.GameMode.Mode.Time:
++                    ScoreAnimateData.PlayAnimation();
++                    TimeAnimateData.PlayAnimation();
++                    break;
+             }
+ 
+             // Tell the data tracker that the session has ended
+diff --git a/Assets/Scripts/Score/IncrementHerder.cs b/Assets/Scripts/Score/IncrementHerder.cs
+index 3049947..3b52e5c 100644
+--- a/Assets/Scripts/Score/IncrementHerder.cs
++++ b/Assets/Scripts/Score/IncrementHerder.cs
+@@ -3,16 +3,16 @@
+ // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ // </copyright>
+ 
+-namespace InterstellarDrift
+-{
+-    using DG.Tweening;
+-    using UnityEngine;
+-    using UnityEngine.UI;
++using DG.Tweening;
++using UnityEngine;
++using UnityEngine.UI;
+ 
++namespace Score
++{
+     /// <summary>
+     ///  Duplicates a base increment-textobject, sets the increment-amount in the text-field and sets up the tweening.
+     /// </summary>
+-    public class IncrementHerder : MonoBehaviour
++    public sealed class IncrementHerder : MonoBehaviour
+     {
+         [SerializeField] private float _animationDuration = .5f;
+ 
+@@ -25,19 +25,12 @@ namespace InterstellarDrift
+             incrementTextObject = transform.GetChild(0).gameObject;
+         }
+ 
+-        public void Increment(int amount)
+-        {
+-            Popup(amount, "+");
+-        }
+-
+-        public void Decrement(int amount)
+-        {
+-            Popup(amount, "-");
+-        }
++        public void Increment(int amount) => Popup(amount, "+");
++        public void Decrement(int amount) => Popup(amount, "-");
+ 
+         private void Popup(int amount, string prefix)
+         {
+-            var obj = Instantiate(incrementTextObject);
++            var obj = Instantiate(incrementTextObject, transform, false);
+ 
+             if (currentActivePopup)
+             {
+@@ -48,8 +41,6 @@ namespace InterstellarDrift
+             obj.transform.localPosition -= new Vector3(0, yOffset, 0);
+             currentActivePopup = obj.transform;
+ 
+-            obj.transform.SetParent(transform, false);
+-
+             obj.GetComponent<Text>().text = prefix + amount;
+             obj.SetActive(true);
+ 
+diff --git a/Assets/Scripts/Score/ScoreDisplay.cs b/Assets/Scripts/Score/ScoreDisplay.cs
+index 238abe3..46e22b6 100644
+--- a/Assets/Scripts/Score/ScoreDisplay.cs
++++ b/Assets/Scripts/Score/ScoreDisplay.cs
+@@ -3,15 +3,15 @@
+ // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ // </copyright>
+ 
+-namespace InterstellarDrift
+-{
+-    using DG.Tweening;
+-    using DG.Tweening.Core;
+-    using DG.Tweening.Plugins.Options;
+-    using UnityEngine;
+-    using UnityEngine.UI;
++using DG.Tweening;
++using DG.Tweening.Core;
++using DG.Tweening.Plugins.Options;
++using UnityEngine;
++using UnityEngine.UI;
+ 
+-    public class ScoreDisplay : MonoBehaviour
++namespace Score
++{
++    public sealed class ScoreDisplay : MonoBehaviour
+     {
+         private int targetScore;
+         private Text scoreText;
+@@ -79,10 +79,7 @@ namespace InterstellarDrift
+             }
+         }
+ 
+-        private void OnDestroy()
+-        {
+-            tweener?.Kill();
+-        }
++        private void OnDestroy() => tweener?.Kill();
+ 
+         private void ResetScoreText()
+         {
+diff --git a/Assets/Scripts/Score/ScoreEventHook.cs b/Assets/Scripts/Score/ScoreEventHook.cs
+index 75010a8..822d291 100644
+--- a/Assets/Scripts/Score/ScoreEventHook.cs
++++ b/Assets/Scripts/Score/ScoreEventHook.cs
+@@ -3,14 +3,14 @@
+ // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ // </copyright>
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
++namespace Score
++{
+     /// <summary>
+     ///  Helper methods for events that need hooks to the singleton-instance.
+     /// </summary>
+-    public class ScoreEventHook : MonoBehaviour
++    public sealed class ScoreEventHook : MonoBehaviour
+     {
+         public void IncreaseScore(int amount)
+         {
+diff --git a/Assets/Scripts/Score/ScoreSupervisor.cs b/Assets/Scripts/Score/ScoreSupervisor.cs
+index 4ab0c7d..bb6f620 100644
+--- a/Assets/Scripts/Score/ScoreSupervisor.cs
++++ b/Assets/Scripts/Score/ScoreSupervisor.cs
+@@ -3,14 +3,16 @@
+ // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ // </copyright>
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using Audio;
++using Data;
++using UnityEngine;
+ 
++namespace Score
++{
+     /// <summary>
+     ///  Defines methods for increasing and decreasing score.
+     /// </summary>
+-    public class ScoreSupervisor : MonoBehaviour
++    public sealed class ScoreSupervisor : MonoBehaviour
+     {
+         private static ScoreSupervisor s_instance;
+ 
+@@ -19,8 +21,8 @@ namespace InterstellarDrift
+ 
+         public static ScoreSupervisor Instance
+         {
+-            get { return s_instance; }
+-            set
++            get => s_instance;
++            private set
+             {
+                 if (s_instance != null)
+                 {
+@@ -82,9 +84,6 @@ namespace InterstellarDrift
+             scoreDisplay.DecreaseScore(amount, true);
+         }
+ 
+-        private void Awake()
+-        {
+-            Init();
+-        }
++        private void Awake() => Init();
+     }
+ }
+diff --git a/Assets/Scripts/Ship/DestroyOnCollide.cs b/Assets/Scripts/Ship/DestroyOnCollide.cs
+index b8ac2be..6738375 100644
+--- a/Assets/Scripts/Ship/DestroyOnCollide.cs
++++ b/Assets/Scripts/Ship/DestroyOnCollide.cs
+@@ -3,20 +3,20 @@
+ // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ // </copyright>
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
++namespace Ship
++{
+     /// <summary>
+     ///  Reloads the scene when a collision occurs.
+     /// </summary>
+-    public class DestroyOnCollide : MonoBehaviour
++    public sealed class DestroyOnCollide : MonoBehaviour
+     {
+         [SerializeField] private LayerMask _collisionLayers;
+ 
+         private void OnCollisionEnter2D(Collision2D other)
+         {
+-            if ((1 << other.gameObject.layer & _collisionLayers) != 0)
++            if (((1 << other.gameObject.layer) & _collisionLayers) != 0)
+             {
+                 Destroy(gameObject);
+             }
+diff --git a/Assets/Scripts/Ship/EffectsShepherd.cs b/Assets/Scripts/Ship/EffectsShepherd.cs
+index a1194b6..8125c33 100644
+--- a/Assets/Scripts/Ship/EffectsShepherd.cs
++++ b/Assets/Scripts/Ship/EffectsShepherd.cs
+@@ -3,12 +3,12 @@
+ // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ // </copyright>
+ 
+-namespace InterstellarDrift
+-{
+-    using System.Collections;
+-    using System.Collections.Generic;
+-    using UnityEngine;
++using System.Collections;
++using System.Collections.Generic;
++using UnityEngine;
+ 
++namespace Ship
++{
+     public enum Thruster
+     {
+         Left,
+@@ -20,7 +20,7 @@ namespace InterstellarDrift
+     /// Finds all particle systems in gameobjects with the 'Effect' layer, and sorts them into lists based on tags.
+     /// Defines methods for activating thrusters at specific sides of the ship. Sides are set based on tags.
+     /// </summary>
+-    public class EffectsShepherd : MonoBehaviour
++    public sealed class EffectsShepherd : MonoBehaviour
+     {
+         private const int layer = 8; // Effect
+         private static readonly Color s_boostColor = new Color32(255, 0, 145, 255);
+@@ -99,25 +99,21 @@ namespace InterstellarDrift
+ 
+         public void ActivateThruster(Thruster toActivate, float duration)
+         {
+-            if (!isInitialized)
++            if (isInitialized)
+             {
+-                return;
++                var thruster = ThrusterToParticleSystem(toActivate);
++                StartCoroutine(ActivateParticlesForDuration(thruster, duration));
+             }
+-
+-            var thruster = ThrusterToParticleSystem(toActivate);
+-            StartCoroutine(ActivateParticlesForDuration(thruster, duration));
+         }
+ 
+         public void ActivateThruster(Thruster toActivate)
+         {
+-            if (!isInitialized)
++            if (isInitialized)
+             {
+-                return;
+-            }
+-
+-            foreach (var partSys in ThrusterToParticleSystem(toActivate))
+-            {
+-                partSys.Play();
++                foreach (var partSys in ThrusterToParticleSystem(toActivate))
++                {
++                    partSys.Play();
++                }
+             }
+         }
+ 
+diff --git a/Assets/Scripts/Ship/ShipSupervisor.cs b/Assets/Scripts/Ship/ShipSupervisor.cs
+index 6c5996d..932bef3 100644
+--- a/Assets/Scripts/Ship/ShipSupervisor.cs
++++ b/Assets/Scripts/Ship/ShipSupervisor.cs
+@@ -3,12 +3,15 @@
+ // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ // </copyright>
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using Controllers;
++using Enemy;
++using Score;
++using UnityEngine;
+ 
++namespace Ship
++{
+     [RequireComponent(typeof(Rigidbody2D))]
+-    public class ShipSupervisor : MonoBehaviour
++    public sealed class ShipSupervisor : MonoBehaviour
+     {
+         [SerializeField] private bool _initializeSelf;
+         [SerializeField] private Controller _desiredController;
+@@ -45,21 +48,13 @@ namespace InterstellarDrift
+             }
+         }
+ 
+-        private BaseController AddControllerOfType(Controller type)
++        private BaseController AddControllerOfType(Controller type) => type switch
+         {
+-            switch (type)
+-            {
+-                case Controller.OneClick:
+-                    return gameObject.AddComponent<OneClickController>();
+-                case Controller.TwoButton:
+-                    return gameObject.AddComponent<TwoButtonController>();
+-                case Controller.Keyboard:
+-                    return gameObject.AddComponent<KeyboardController>();
+-                case Controller.Enemy:
+-                    return gameObject.AddComponent<EnemyController>();
+-                default:
+-                    return null;
+-            }
+-        }
++            Controller.OneClick => gameObject.AddComponent<OneClickController>(),
++            Controller.TwoButton => gameObject.AddComponent<TwoButtonController>(),
++            Controller.Keyboard => gameObject.AddComponent<KeyboardController>(),
++            Controller.Enemy => gameObject.AddComponent<EnemyController>(),
++            _ => null
++        };
+     }
+ }
+diff --git a/Assets/Scripts/Utilities/AndroidBackButtonQuitApplication.cs b/Assets/Scripts/Utilities/AndroidBackButtonQuitApplication.cs
+index 56e821f..a550795 100644
+--- a/Assets/Scripts/Utilities/AndroidBackButtonQuitApplication.cs
++++ b/Assets/Scripts/Utilities/AndroidBackButtonQuitApplication.cs
+@@ -3,34 +3,19 @@
+ // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ // </copyright>
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
+-    public class AndroidBackButtonQuitApplication : MonoBehaviour
++namespace Utilities
++{
++    public sealed class AndroidBackButtonQuitApplication : MonoBehaviour
+     {
+ #if UNITY_ANDROID
+         private GameInput _input;
+ 
+-        private void Awake()
+-        {
+-            _input = new GameInput();
+-        }
+-
+-        private void OnEnable()
+-        {
+-            _input.System.Enable();
+-        }
+-
+-        private void OnDisable()
+-        {
+-            _input.System.Disable();
+-        }
+-
+-        private void OnDestroy()
+-        {
+-            _input?.Dispose();
+-        }
++        private void Awake() => _input = new GameInput();
++        private void OnEnable() => _input.System.Enable();
++        private void OnDisable() => _input.System.Disable();
++        private void OnDestroy() => _input?.Dispose();
+ 
+         private void Update()
+         {
+diff --git a/Assets/Scripts/Utilities/DisableSelfOnStart.cs b/Assets/Scripts/Utilities/DisableSelfOnStart.cs
+index 8aa57fd..71d5326 100644
+--- a/Assets/Scripts/Utilities/DisableSelfOnStart.cs
++++ b/Assets/Scripts/Utilities/DisableSelfOnStart.cs
+@@ -3,15 +3,12 @@
+ // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ // </copyright>
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
+-    public class DisableSelfOnStart : MonoBehaviour
++namespace Utilities
++{
++    public sealed class DisableSelfOnStart : MonoBehaviour
+     {
+-        private void Start()
+-        {
+-            gameObject.SetActive(false);
+-        }
++        private void Start() => gameObject.SetActive(false);
+     }
+ }
+diff --git a/Assets/Scripts/Utilities/DontDestroyOnLoad.cs b/Assets/Scripts/Utilities/DontDestroyOnLoad.cs
+index 2e2b1e0..ff9b5e7 100644
+--- a/Assets/Scripts/Utilities/DontDestroyOnLoad.cs
++++ b/Assets/Scripts/Utilities/DontDestroyOnLoad.cs
+@@ -3,15 +3,12 @@
+ // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ // </copyright>
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
+-    public class DontDestroyOnLoad : MonoBehaviour
++namespace Utilities
++{
++    public sealed class DontDestroyOnLoad : MonoBehaviour
+     {
+-        private void Awake()
+-        {
+-            DontDestroyOnLoad(gameObject);
+-        }
++        private void Awake() => DontDestroyOnLoad(gameObject);
+     }
+ }
+diff --git a/Assets/Scripts/Utilities/GameObjectEventHook.cs b/Assets/Scripts/Utilities/GameObjectEventHook.cs
+index 82d0a7d..9d3830c 100644
+--- a/Assets/Scripts/Utilities/GameObjectEventHook.cs
++++ b/Assets/Scripts/Utilities/GameObjectEventHook.cs
+@@ -3,11 +3,11 @@
+ // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ // </copyright>
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
+-    public class GameObjectEventHook : MonoBehaviour
++namespace Utilities
++{
++    public sealed class GameObjectEventHook : MonoBehaviour
+     {
+         public GameObject Target;
+ 
+diff --git a/Assets/Scripts/Utilities/InputBootstrap.cs b/Assets/Scripts/Utilities/InputBootstrap.cs
+index 4052a68..8d4237d 100644
+--- a/Assets/Scripts/Utilities/InputBootstrap.cs
++++ b/Assets/Scripts/Utilities/InputBootstrap.cs
+@@ -5,11 +5,11 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
+-    using UnityEngine.InputSystem.EnhancedTouch;
++using UnityEngine;
++using UnityEngine.InputSystem.EnhancedTouch;
+ 
++namespace Utilities
++{
+     internal static class InputBootstrap
+     {
+         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+diff --git a/Assets/Scripts/Utilities/LoadScene.cs b/Assets/Scripts/Utilities/LoadScene.cs
+index a02d6fd..f407e21 100644
+--- a/Assets/Scripts/Utilities/LoadScene.cs
++++ b/Assets/Scripts/Utilities/LoadScene.cs
+@@ -5,21 +5,14 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
+-    using UnityEngine.SceneManagement;
++using UnityEngine;
++using UnityEngine.SceneManagement;
+ 
+-    public class LoadScene : MonoBehaviour
++namespace Utilities
++{
++    public sealed class LoadScene : MonoBehaviour
+     {
+-        public void LoadSceneNumbered(int sceneNumber)
+-        {
+-            SceneManager.LoadScene(sceneNumber);
+-        }
+-
+-        public void LoadSceneNamed(string sceneName)
+-        {
+-            SceneManager.LoadScene(sceneName);
+-        }
++        public void LoadSceneNumbered(int sceneNumber) => SceneManager.LoadScene(sceneNumber);
++        public void LoadSceneNamed(string sceneName) => SceneManager.LoadScene(sceneName);
+     }
+ }
+diff --git a/Assets/Scripts/Utilities/MeasureVelocity.cs b/Assets/Scripts/Utilities/MeasureVelocity.cs
+index 7287aff..e25cc1d 100644
+--- a/Assets/Scripts/Utilities/MeasureVelocity.cs
++++ b/Assets/Scripts/Utilities/MeasureVelocity.cs
+@@ -3,11 +3,13 @@
+ // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ // </copyright>
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using Data;
++using UnityEngine;
+ 
+-    public class MeasureVelocity : MonoBehaviour
++namespace Utilities
++{
++    [RequireComponent(typeof(Rigidbody2D))]
++    public sealed class MeasureVelocity : MonoBehaviour
+     {
+         [SerializeField] private float _interval;
+ 
+@@ -19,7 +21,7 @@ namespace InterstellarDrift
+         {
+             cachedRigidbody2D = GetComponent<Rigidbody2D>();
+             Init();
+-            Invoke("LogVelocity", _interval);
++            Invoke(nameof(LogVelocity), _interval);
+         }
+ 
+         private void Update()
+@@ -40,7 +42,7 @@ namespace InterstellarDrift
+             TrackedData.Instance.SessionData.DistanceTravelled += Mathf.FloorToInt(velocityCount/timeAlive);
+             Init();
+ 
+-            Invoke("LogVelocity", _interval);
++            Invoke(nameof(LogVelocity), _interval);
+         }
+     }
+ }
+diff --git a/Assets/Scripts/Utilities/SetActiveOnDestroy.cs b/Assets/Scripts/Utilities/SetActiveOnDestroy.cs
+index da87f3d..a8b54f2 100644
+--- a/Assets/Scripts/Utilities/SetActiveOnDestroy.cs
++++ b/Assets/Scripts/Utilities/SetActiveOnDestroy.cs
+@@ -3,28 +3,28 @@
+ // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ // </copyright>
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine;
++using UnityEngine;
+ 
++namespace Utilities
++{
+     /// <summary>
+     ///  Sets the active state of target gameobjects.
+     /// </summary>
+-    public class SetActiveOnDestroy : MonoBehaviour
++    public sealed class SetActiveOnDestroy : MonoBehaviour
+     {
+         [SerializeField] private GameObject _target;
+         [SerializeField] private bool _activeState;
+ 
+         public GameObject Target
+         {
+-            get { return _target; }
+-            set { _target = value; }
++            get => _target;
++            set => _target = value;
+         }
+ 
+         public bool ActiveState
+         {
+-            get { return _activeState; }
+-            set { _activeState = value; }
++            get => _activeState;
++            set => _activeState = value;
+         }
+ 
+         private void OnDestroy()
+diff --git a/Assets/Scripts/Utilities/ShakeTargetOnDestroyed.cs b/Assets/Scripts/Utilities/ShakeTargetOnDestroyed.cs
+index 05305de..0c96c85 100644
+--- a/Assets/Scripts/Utilities/ShakeTargetOnDestroyed.cs
++++ b/Assets/Scripts/Utilities/ShakeTargetOnDestroyed.cs
+@@ -3,15 +3,15 @@
+ // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+ // </copyright>
+ 
+-namespace InterstellarDrift
+-{
+-    using DG.Tweening;
+-    using UnityEngine;
++using DG.Tweening;
++using UnityEngine;
+ 
++namespace Utilities
++{
+     /// <summary>
+     ///  Shakes a target transform on the destruction of this gameobject.
+     /// </summary>
+-    public class ShakeTargetOnDestroyed : MonoBehaviour
++    public sealed class ShakeTargetOnDestroyed : MonoBehaviour
+     {
+         public Transform ShakeTarget;
+ 
+diff --git a/Assets/Scripts/Utilities/TouchInput.cs b/Assets/Scripts/Utilities/TouchInput.cs
+index f9def9f..0a19a51 100644
+--- a/Assets/Scripts/Utilities/TouchInput.cs
++++ b/Assets/Scripts/Utilities/TouchInput.cs
+@@ -5,16 +5,16 @@
+ // </copyright>
+ // --------------------------------------------------------------------------------------------------------------------
+ 
+-namespace InterstellarDrift
+-{
+-    using UnityEngine.InputSystem.EnhancedTouch;
++using UnityEngine.InputSystem.EnhancedTouch;
+ 
++namespace Utilities
++{
+     public static class TouchInput
+     {
+         public static bool TwoFingerOppositeHalves(int halfScreenWidth)
+         {
+             var touches = Touch.activeTouches;
+-            if (touches.Count != 2)
++            if (touches.Count is not 2)
+             {
+                 return false;
+             }

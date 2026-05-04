@@ -5,13 +5,13 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace InterstellarDrift
-{
-    using CloudOnce;
-    using UnityEngine;
+using CloudOnce;
+using UnityEngine;
 
+namespace Enemy
+{
     [RequireComponent(typeof(Vehicle), typeof(TargetTransform))]
-    public class EnemyDriver : MonoBehaviour
+    public sealed class EnemyDriver : MonoBehaviour
     {
         [SerializeField] private bool _isEngineOn;
         [SerializeField] private float _turnRatio = 2f;
@@ -26,14 +26,14 @@ namespace InterstellarDrift
 
         public bool IsEngineOn
         {
-            get { return _isEngineOn; }
-            set { _isEngineOn = value; }
+            get => _isEngineOn;
+            set => _isEngineOn = value;
         }
 
         public float TurnRatio
         {
-            get { return _turnRatio; }
-            set { _turnRatio = value; }
+            get => _turnRatio;
+            set => _turnRatio = value;
         }
 
         public Vector2 TargetPoint
@@ -48,10 +48,7 @@ namespace InterstellarDrift
                 return targetPoint;
             }
 
-            set
-            {
-                targetPoint = value;
-            }
+            set => targetPoint = value;
         }
 
         private void Awake()
